@@ -16,15 +16,15 @@ component StepBadge inherits HorizontalLayout {
     in property <bool> active: false;
     in property <bool> done: false;
 
-    spacing: 7px;
+    spacing: Theme.space-sm;
     alignment: start;
 
     VerticalLayout {
         alignment: center;
         Rectangle {
-            width: 22px;
-            height: 22px;
-            border-radius: 11px;
+            width: 18px;
+            height: 18px;
+            border-radius: 9px;
             background: root.done ? Theme.success-dot
                 : root.active ? Theme.header-step-active
                 : Theme.header-bg-elevated;
@@ -33,17 +33,17 @@ component StepBadge inherits HorizontalLayout {
 
             if root.done: Image {
                 source: @image-url("icons/check.svg");
-                width: 12px;
-                height: 12px;
+                width: 10px;
+                height: 10px;
                 colorize: #FFFFFF;
-                x: 5px;
-                y: 5px;
+                x: 4px;
+                y: 4px;
             }
 
             if !root.done: Text {
                 text: root.num;
                 color: root.active ? Theme.header-bg : Theme.header-muted;
-                font-size: 11.5px;
+                font-size: 10.5px;
                 font-weight: 700;
                 horizontal-alignment: center;
                 vertical-alignment: center;
@@ -54,7 +54,7 @@ component StepBadge inherits HorizontalLayout {
     Text {
         text: root.title;
         color: (root.active || root.done) ? Theme.header-text : Theme.header-muted;
-        font-size: 12.5px;
+        font-size: 11.5px;
         font-weight: root.active ? 600 : 500;
         vertical-alignment: center;
     }
@@ -63,7 +63,7 @@ component StepBadge inherits HorizontalLayout {
 component StatusBarFooter inherits Rectangle {
     callback author-clicked();
 
-    height: 28px;
+    height: Theme.statusbar-height;
     background: Theme.bg-subtle;
 
     Rectangle {
@@ -74,15 +74,15 @@ component StatusBarFooter inherits Rectangle {
     }
 
     HorizontalLayout {
-        padding-left: 24px;
-        padding-right: 24px;
+        padding-left: Theme.space-xl;
+        padding-right: Theme.space-xl;
         spacing: 0px;
         alignment: start;
 
         Text {
             text: "© 2026 by ";
             color: Theme.text-muted;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 400;
             vertical-alignment: center;
         }
@@ -104,7 +104,7 @@ component StatusBarFooter inherits Rectangle {
                         color: link-ta.pressed ? Theme.accent-pressed
                             : link-ta.has-hover ? Theme.accent-hover
                             : Theme.accent;
-                        font-size: 11.5px;
+                        font-size: 11px;
                         font-weight: 700;
                         vertical-alignment: center;
 
@@ -135,7 +135,7 @@ component StatusBarFooter inherits Rectangle {
         Text {
             text: " - Ban PDTD - Agribank";
             color: Theme.text-muted;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 400;
             vertical-alignment: center;
         }
@@ -146,10 +146,10 @@ export component AppWindow inherits Window {
     title: "Easy IP Changer — Đổi nhanh địa chỉ IP";
     icon: @image-url("../assets/app-icon.png");
     default-font-family: Theme.font-sans;
-    preferred-width: 560px;
-    preferred-height: 758px;
-    min-width: 520px;
-    min-height: 678px;
+    preferred-width: 500px;
+    preferred-height: 592px;
+    min-width: 460px;
+    min-height: 552px;
     background: Theme.bg-canvas;
 
     // 1 = Select NIC, 2 = IP Config, 3 = Success
@@ -226,72 +226,72 @@ export component AppWindow inherits Window {
     VerticalLayout {
         spacing: 0px;
 
-        // Committed Navy Top Rail + Stepper
+        // Committed Agribank Bordeaux Top Rail + Stepper
         Rectangle {
             background: Theme.header-bg;
 
             VerticalLayout {
-                padding-left: 24px;
-                padding-right: 24px;
-                padding-top: 13px;
-                padding-bottom: 13px;
-                spacing: 10px;
+                padding-left: Theme.space-xl;
+                padding-right: Theme.space-xl;
+                padding-top: 9px;
+                padding-bottom: 9px;
+                spacing: 7px;
 
                 HorizontalLayout {
                     alignment: space-between;
 
                     HorizontalLayout {
-                        spacing: 11px;
+                        spacing: 9px;
                         alignment: start;
 
                         VerticalLayout {
                             alignment: center;
                             Image {
                                 source: @image-url("icons/agribank-logo.svg");
-                                width: 34px;
-                                height: 34px;
+                                width: 28px;
+                                height: 28px;
                             }
                         }
 
                         VerticalLayout {
-                            spacing: 2px;
+                            spacing: 1px;
                             alignment: center;
 
                             Text {
                                 text: "Easy IP Changer";
                                 color: Theme.header-text;
-                                font-size: 16px;
+                                font-size: 14.5px;
                                 font-weight: 700;
                             }
 
                             Text {
                                 text: "Đổi nhanh địa chỉ IP cho Windows 10/11 Pro";
                                 color: Theme.header-muted;
-                                font-size: 12px;
+                                font-size: 11px;
                             }
                         }
                     }
 
                     HorizontalLayout {
-                        spacing: 8px;
+                        spacing: Theme.space-sm;
                         alignment: end;
 
                         if root.is-preview-mode: VerticalLayout {
                             alignment: center;
                             Rectangle {
-                                height: 24px;
+                                height: 22px;
                                 border-radius: Theme.radius-pill;
                                 background: Theme.header-bg-elevated;
                                 border-width: 1px;
                                 border-color: Theme.header-line;
 
                                 HorizontalLayout {
-                                    padding-left: 9px;
-                                    padding-right: 9px;
+                                    padding-left: 8px;
+                                    padding-right: 8px;
                                     Text {
                                         text: "Preview macOS";
                                         color: Theme.header-muted;
-                                        font-size: 11px;
+                                        font-size: 10.5px;
                                         font-weight: 600;
                                         vertical-alignment: center;
                                     }
@@ -302,7 +302,7 @@ export component AppWindow inherits Window {
                         if root.has-user-guide: VerticalLayout {
                             alignment: center;
                             Rectangle {
-                                height: 28px;
+                                height: 24px;
                                 border-radius: Theme.radius-sm;
                                 background: guide-hdr-ta.pressed ? Theme.accent-pressed
                                     : guide-hdr-ta.has-hover ? #7D132D
@@ -314,17 +314,17 @@ export component AppWindow inherits Window {
                                 animate border-color { duration: 140ms; easing: ease-out; }
 
                                 HorizontalLayout {
-                                    padding-left: 10px;
-                                    padding-right: 10px;
-                                    spacing: 6px;
+                                    padding-left: 8px;
+                                    padding-right: 8px;
+                                    spacing: 5px;
                                     alignment: center;
 
                                     VerticalLayout {
                                         alignment: center;
                                         Image {
                                             source: @image-url("icons/book-open.svg");
-                                            width: 13px;
-                                            height: 13px;
+                                            width: 12px;
+                                            height: 12px;
                                             colorize: Theme.header-text;
                                         }
                                     }
@@ -332,7 +332,7 @@ export component AppWindow inherits Window {
                                     Text {
                                         text: "Hướng dẫn";
                                         color: Theme.header-text;
-                                        font-size: 12px;
+                                        font-size: 11px;
                                         font-weight: 600;
                                         vertical-alignment: center;
                                     }
@@ -348,7 +348,7 @@ export component AppWindow inherits Window {
                 }
 
                 HorizontalLayout {
-                    spacing: 14px;
+                    spacing: 10px;
                     alignment: start;
 
                     StepBadge {
@@ -361,7 +361,7 @@ export component AppWindow inherits Window {
                     VerticalLayout {
                         alignment: center;
                         Rectangle {
-                            width: 24px;
+                            width: 20px;
                             height: 1.5px;
                             background: root.current-screen > 1 ? Theme.success-dot : Theme.header-line;
                         }
@@ -395,11 +395,9 @@ export component AppWindow inherits Window {
                 adapters: root.adapters;
                 selected-index <=> root.selected-nic-index;
                 has-ethernet: root.has-ethernet;
-                has-user-guide: root.has-user-guide;
                 scan-error: root.scan-error;
                 refresh-clicked => { root.refresh-adapters(); }
                 continue-clicked => { root.proceed-to-ip-config(); }
-                guide-clicked => { root.open-user-guide(); }
             }
 
             ip-screen := IpConfigScreen {

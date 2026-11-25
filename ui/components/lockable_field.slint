@@ -11,20 +11,20 @@ export component LockableField inherits VerticalLayout {
     callback toggle-edit();
     callback edited(string);
 
-    spacing: 5px;
+    spacing: Theme.space-xs;
 
     HorizontalLayout {
         alignment: space-between;
-        spacing: 8px;
+        spacing: Theme.space-sm;
 
         HorizontalLayout {
-            spacing: 8px;
+            spacing: Theme.space-sm;
             alignment: start;
 
             Text {
                 text: root.label;
                 color: Theme.text-primary;
-                font-size: 13px;
+                font-size: 12px;
                 font-weight: 600;
                 vertical-alignment: center;
             }
@@ -32,17 +32,17 @@ export component LockableField inherits VerticalLayout {
             if root.badge-note != "": VerticalLayout {
                 alignment: center;
                 Rectangle {
-                    height: 20px;
+                    height: 18px;
                     border-radius: Theme.radius-pill;
                     background: Theme.bg-subtle;
 
                     HorizontalLayout {
-                        padding-left: 8px;
-                        padding-right: 8px;
+                        padding-left: 6px;
+                        padding-right: 6px;
                         Text {
                             text: root.badge-note;
                             color: Theme.text-muted;
-                            font-size: 11px;
+                            font-size: 10.5px;
                             font-weight: 500;
                             vertical-alignment: center;
                         }
@@ -67,7 +67,7 @@ export component LockableField inherits VerticalLayout {
     }
 
     Rectangle {
-        height: 35px;
+        height: Theme.control-height;
         border-radius: Theme.radius-sm;
         border-width: (root.editable && input.has-focus) ? 1.5px : 1px;
         border-color: (root.editable && input.has-focus) ? Theme.border-focus
@@ -79,25 +79,25 @@ export component LockableField inherits VerticalLayout {
         animate border-color { duration: 150ms; easing: ease-out; }
 
         if root.value == "": Text {
-            x: 12px;
-            width: parent.width - 24px;
+            x: 10px;
+            width: parent.width - 20px;
             height: parent.height;
             text: root.placeholder;
-            color: #94A3B8;
-            font-size: 13.5px;
+            color: Theme.text-muted;
+            font-size: 12.5px;
             vertical-alignment: center;
         }
 
         input := TextInput {
-            x: 12px;
-            width: parent.width - 24px;
+            x: 10px;
+            width: parent.width - 20px;
             height: parent.height;
             text <=> root.value;
             read-only: !root.editable || root.busy;
             enabled: root.editable && !root.busy;
             single-line: true;
             vertical-alignment: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: root.editable ? Theme.text-primary : Theme.text-readonly;
             selection-background-color: Theme.accent-soft;
@@ -114,20 +114,20 @@ export component LockableDnsGroup inherits VerticalLayout {
     in property <bool> busy: false;
     callback toggle-edit();
 
-    spacing: 5px;
+    spacing: Theme.space-xs;
 
     HorizontalLayout {
         alignment: space-between;
-        spacing: 8px;
+        spacing: Theme.space-sm;
 
         HorizontalLayout {
-            spacing: 8px;
+            spacing: Theme.space-sm;
             alignment: start;
 
             Text {
                 text: "Máy chủ DNS";
                 color: Theme.text-primary;
-                font-size: 13px;
+                font-size: 12px;
                 font-weight: 600;
                 vertical-alignment: center;
             }
@@ -135,17 +135,17 @@ export component LockableDnsGroup inherits VerticalLayout {
             VerticalLayout {
                 alignment: center;
                 Rectangle {
-                    height: 20px;
+                    height: 18px;
                     border-radius: Theme.radius-pill;
                     background: Theme.bg-subtle;
 
                     HorizontalLayout {
-                        padding-left: 8px;
-                        padding-right: 8px;
+                        padding-left: 6px;
+                        padding-right: 6px;
                         Text {
                             text: root.editable ? "Đang chỉnh sửa" : "Mặc định công ty";
                             color: Theme.text-muted;
-                            font-size: 11px;
+                            font-size: 10.5px;
                             font-weight: 500;
                             vertical-alignment: center;
                         }
@@ -170,22 +170,22 @@ export component LockableDnsGroup inherits VerticalLayout {
     }
 
     HorizontalLayout {
-        spacing: 10px;
+        spacing: Theme.space-md;
 
         // DNS 1
         VerticalLayout {
             horizontal-stretch: 1;
-            spacing: 3px;
+            spacing: Theme.space-2xs;
 
             Text {
                 text: "DNS chính";
                 color: Theme.text-muted;
-                font-size: 11.5px;
+                font-size: 11px;
                 font-weight: 500;
             }
 
             Rectangle {
-                height: 35px;
+                height: Theme.control-height;
                 border-radius: Theme.radius-sm;
                 border-width: (root.editable && dns1.has-focus) ? 1.5px : 1px;
                 border-color: (root.editable && dns1.has-focus) ? Theme.border-focus
@@ -194,15 +194,15 @@ export component LockableDnsGroup inherits VerticalLayout {
                 background: root.editable ? Theme.bg-surface : Theme.bg-readonly;
 
                 dns1 := TextInput {
-                    x: 12px;
-                    width: parent.width - 24px;
+                    x: 10px;
+                    width: parent.width - 20px;
                     height: parent.height;
                     text <=> root.dns-primary;
                     read-only: !root.editable || root.busy;
                     enabled: root.editable && !root.busy;
                     single-line: true;
                     vertical-alignment: center;
-                    font-size: 14px;
+                    font-size: 13px;
                     font-weight: 500;
                     color: root.editable ? Theme.text-primary : Theme.text-readonly;
                     selection-background-color: Theme.accent-soft;
@@ -214,17 +214,17 @@ export component LockableDnsGroup inherits VerticalLayout {
         // DNS 2
         VerticalLayout {
             horizontal-stretch: 1;
-            spacing: 3px;
+            spacing: Theme.space-2xs;
 
             Text {
                 text: "DNS phụ";
                 color: Theme.text-muted;
-                font-size: 11.5px;
+                font-size: 11px;
                 font-weight: 500;
             }
 
             Rectangle {
-                height: 35px;
+                height: Theme.control-height;
                 border-radius: Theme.radius-sm;
                 border-width: (root.editable && dns2.has-focus) ? 1.5px : 1px;
                 border-color: (root.editable && dns2.has-focus) ? Theme.border-focus
@@ -233,15 +233,15 @@ export component LockableDnsGroup inherits VerticalLayout {
                 background: root.editable ? Theme.bg-surface : Theme.bg-readonly;
 
                 dns2 := TextInput {
-                    x: 12px;
-                    width: parent.width - 24px;
+                    x: 10px;
+                    width: parent.width - 20px;
                     height: parent.height;
                     text <=> root.dns-secondary;
                     read-only: !root.editable || root.busy;
                     enabled: root.editable && !root.busy;
                     single-line: true;
                     vertical-alignment: center;
-                    font-size: 14px;
+                    font-size: 13px;
                     font-weight: 500;
                     color: root.editable ? Theme.text-primary : Theme.text-readonly;
                     selection-background-color: Theme.accent-soft;

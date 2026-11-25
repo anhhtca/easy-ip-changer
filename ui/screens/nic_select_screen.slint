@@ -20,20 +20,23 @@ component NicOptionRow inherits Rectangle {
     animate border-color { duration: 150ms; easing: ease-out; }
 
     HorizontalLayout {
-        padding: 14px;
-        spacing: 12px;
+        padding-left: 11px;
+        padding-right: 11px;
+        padding-top: 9px;
+        padding-bottom: 9px;
+        spacing: 10px;
         alignment: start;
 
         // Radio indicator
         VerticalLayout {
             alignment: center;
-            width: 20px;
+            width: 18px;
 
             Rectangle {
-                width: 18px;
-                height: 18px;
-                border-radius: 9px;
-                border-width: root.selected ? 5px : 1.5px;
+                width: 16px;
+                height: 16px;
+                border-radius: 8px;
+                border-width: root.selected ? 4.5px : 1.5px;
                 border-color: root.selected ? Theme.accent : Theme.border-strong;
                 background: Theme.bg-surface;
             }
@@ -44,8 +47,8 @@ component NicOptionRow inherits Rectangle {
             alignment: center;
 
             Rectangle {
-                width: 40px;
-                height: 40px;
+                width: 32px;
+                height: 32px;
                 border-radius: Theme.radius-sm;
                 background: root.selected ? Theme.accent-soft
                     : root.item.is-ethernet ? #F8EBEF
@@ -55,8 +58,8 @@ component NicOptionRow inherits Rectangle {
                     source: root.item.is-ethernet
                         ? @image-url("../icons/ethernet.svg")
                         : @image-url("../icons/wifi.svg");
-                    width: 20px;
-                    height: 20px;
+                    width: 16px;
+                    height: 16px;
                     colorize: root.selected ? Theme.accent
                         : root.item.is-ethernet ? #8F1634
                         : Theme.text-secondary;
@@ -69,32 +72,32 @@ component NicOptionRow inherits Rectangle {
         // Info column
         VerticalLayout {
             horizontal-stretch: 1;
-            spacing: 4px;
+            spacing: Theme.space-2xs;
 
             HorizontalLayout {
-                spacing: 8px;
+                spacing: Theme.space-sm;
                 alignment: start;
 
                 Text {
                     text: root.item.friendly-name;
                     color: Theme.text-primary;
-                    font-size: 14.5px;
+                    font-size: 13px;
                     font-weight: 700;
                     vertical-alignment: center;
                 }
 
                 Rectangle {
-                    height: 20px;
+                    height: 18px;
                     border-radius: Theme.radius-pill;
                     background: Theme.bg-subtle;
 
                     HorizontalLayout {
-                        padding-left: 7px;
-                        padding-right: 7px;
+                        padding-left: 6px;
+                        padding-right: 6px;
                         Text {
                             text: root.item.type-label;
                             color: Theme.text-secondary;
-                            font-size: 11px;
+                            font-size: 10.5px;
                             font-weight: 600;
                             vertical-alignment: center;
                         }
@@ -102,19 +105,19 @@ component NicOptionRow inherits Rectangle {
                 }
 
                 if root.recommended: Rectangle {
-                    height: 21px;
+                    height: 18px;
                     border-radius: Theme.radius-pill;
                     background: Theme.success-bg;
                     border-width: 1px;
                     border-color: Theme.success-border;
 
                     HorizontalLayout {
-                        padding-left: 8px;
-                        padding-right: 8px;
+                        padding-left: 6px;
+                        padding-right: 6px;
                         Text {
                             text: "Nên chọn";
                             color: Theme.success;
-                            font-size: 11px;
+                            font-size: 10.5px;
                             font-weight: 700;
                             vertical-alignment: center;
                         }
@@ -125,25 +128,25 @@ component NicOptionRow inherits Rectangle {
             Text {
                 text: root.item.description;
                 color: Theme.text-secondary;
-                font-size: 12px;
+                font-size: 11.5px;
                 overflow: elide;
             }
 
             HorizontalLayout {
-                spacing: 10px;
+                spacing: Theme.space-md;
                 alignment: start;
-                padding-top: 2px;
+                padding-top: 1px;
 
                 HorizontalLayout {
-                    spacing: 5px;
+                    spacing: 4px;
                     alignment: start;
 
                     VerticalLayout {
                         alignment: center;
                         Rectangle {
-                            width: 7px;
-                            height: 7px;
-                            border-radius: 3.5px;
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 3px;
                             background: root.item.is-connected ? Theme.success-dot : #94A3B8;
                         }
                     }
@@ -151,7 +154,7 @@ component NicOptionRow inherits Rectangle {
                     Text {
                         text: root.item.status-text;
                         color: root.item.is-connected ? Theme.success : Theme.text-muted;
-                        font-size: 11.5px;
+                        font-size: 11px;
                         font-weight: 600;
                         vertical-alignment: center;
                     }
@@ -160,14 +163,14 @@ component NicOptionRow inherits Rectangle {
                 Text {
                     text: "•";
                     color: #CBD5E1;
-                    font-size: 11.5px;
+                    font-size: 11px;
                     vertical-alignment: center;
                 }
 
                 Text {
                     text: root.item.ip-summary;
                     color: Theme.text-muted;
-                    font-size: 11.5px;
+                    font-size: 11px;
                     vertical-alignment: center;
                 }
             }
@@ -184,44 +187,42 @@ export component NicSelectScreen inherits VerticalLayout {
     in property <[NicItem]> adapters;
     in-out property <int> selected-index: -1;
     in property <bool> has-ethernet: true;
-    in property <bool> has-user-guide: false;
     in property <string> scan-error: "";
 
     callback refresh-clicked();
     callback continue-clicked();
-    callback guide-clicked();
 
     spacing: 0px;
 
     // Main content
     VerticalLayout {
         vertical-stretch: 1;
-        padding-left: 24px;
-        padding-right: 24px;
-        padding-top: 20px;
-        padding-bottom: 14px;
-        spacing: 14px;
+        padding-left: Theme.space-xl;
+        padding-right: Theme.space-xl;
+        padding-top: 14px;
+        padding-bottom: 10px;
+        spacing: 10px;
 
         // Title + Refresh
         HorizontalLayout {
             alignment: space-between;
-            spacing: 12px;
+            spacing: 10px;
 
             VerticalLayout {
                 horizontal-stretch: 1;
-                spacing: 4px;
+                spacing: Theme.space-2xs;
 
                 Text {
                     text: "Chọn kết nối mạng cần đổi IP";
                     color: Theme.text-primary;
-                    font-size: 18px;
+                    font-size: 16px;
                     font-weight: 700;
                 }
 
                 Text {
                     text: "Ưu tiên chọn kết nối dây Ethernet (kể cả USB Ethernet) nếu máy đang cắm cáp mạng.";
                     color: Theme.text-secondary;
-                    font-size: 12.5px;
+                    font-size: 11.5px;
                     wrap: word-wrap;
                 }
             }
@@ -230,105 +231,12 @@ export component NicSelectScreen inherits VerticalLayout {
                 alignment: start;
                 SecondaryButton {
                     label: "Quét lại";
-                    height: 34px;
-                    min-width: 96px;
+                    height: Theme.btn-compact-height;
+                    min-width: 82px;
                     has-leading-icon: true;
                     leading-icon: @image-url("../icons/refresh.svg");
                     clicked => { root.refresh-clicked(); }
                 }
-            }
-        }
-
-        if root.has-user-guide: Rectangle {
-            border-radius: Theme.radius-md;
-            background: guide-banner-ta.pressed ? #F5DCE3
-                : guide-banner-ta.has-hover ? #FAE8EE
-                : Theme.bg-selected;
-            border-width: 1px;
-            border-color: guide-banner-ta.has-hover ? #DFA5B4 : #EFC8D2;
-
-            animate background { duration: 140ms; easing: ease-out; }
-            animate border-color { duration: 140ms; easing: ease-out; }
-
-            HorizontalLayout {
-                padding-left: 12px;
-                padding-right: 12px;
-                padding-top: 9px;
-                padding-bottom: 9px;
-                spacing: 10px;
-                alignment: space-between;
-
-                HorizontalLayout {
-                    horizontal-stretch: 1;
-                    spacing: 10px;
-                    alignment: start;
-
-                    VerticalLayout {
-                        alignment: center;
-                        Rectangle {
-                            width: 30px;
-                            height: 30px;
-                            border-radius: Theme.radius-sm;
-                            background: Theme.accent-soft;
-
-                            Image {
-                                source: @image-url("../icons/book-open.svg");
-                                width: 15px;
-                                height: 15px;
-                                colorize: Theme.accent;
-                                x: (parent.width - self.width) / 2;
-                                y: (parent.height - self.height) / 2;
-                            }
-                        }
-                    }
-
-                    VerticalLayout {
-                        horizontal-stretch: 1;
-                        alignment: center;
-                        spacing: 1px;
-
-                        Text {
-                            text: "Lần đầu sử dụng? Xem hướng dẫn nhanh (PDF)";
-                            color: Theme.text-primary;
-                            font-size: 12.5px;
-                            font-weight: 600;
-                        }
-
-                        Text {
-                            text: "Hướng dẫn ngắn gọn từng bước kèm ảnh minh họa";
-                            color: Theme.text-secondary;
-                            font-size: 11.5px;
-                        }
-                    }
-                }
-
-                HorizontalLayout {
-                    spacing: 4px;
-                    alignment: end;
-
-                    Text {
-                        text: "Mở tài liệu";
-                        color: Theme.accent;
-                        font-size: 12px;
-                        font-weight: 700;
-                        vertical-alignment: center;
-                    }
-
-                    VerticalLayout {
-                        alignment: center;
-                        Image {
-                            source: @image-url("../icons/arrow-right.svg");
-                            width: 13px;
-                            height: 13px;
-                            colorize: Theme.accent;
-                        }
-                    }
-                }
-            }
-
-            guide-banner-ta := TouchArea {
-                mouse-cursor: pointer;
-                clicked => { root.guide-clicked(); }
             }
         }
 
@@ -339,20 +247,20 @@ export component NicSelectScreen inherits VerticalLayout {
             border-color: Theme.danger-border;
 
             HorizontalLayout {
-                padding: 12px;
-                spacing: 8px;
+                padding: 9px;
+                spacing: Theme.space-md;
 
                 Image {
                     source: @image-url("../icons/alert.svg");
-                    width: 16px;
-                    height: 16px;
+                    width: 15px;
+                    height: 15px;
                     colorize: Theme.danger;
                 }
 
                 Text {
                     text: root.scan-error;
                     color: Theme.danger;
-                    font-size: 12.5px;
+                    font-size: 11.5px;
                     wrap: word-wrap;
                     horizontal-stretch: 1;
                 }
@@ -368,13 +276,13 @@ export component NicSelectScreen inherits VerticalLayout {
 
             VerticalLayout {
                 alignment: center;
-                padding: 28px;
-                spacing: 8px;
+                padding: 20px;
+                spacing: Theme.space-sm;
 
                 Text {
                     text: "Không tìm thấy kết nối Ethernet hoặc Wi-Fi";
                     color: Theme.text-primary;
-                    font-size: 15px;
+                    font-size: 14px;
                     font-weight: 600;
                     horizontal-alignment: center;
                 }
@@ -382,7 +290,7 @@ export component NicSelectScreen inherits VerticalLayout {
                 Text {
                     text: "Hãy kiểm tra dây mạng, đầu chuyển USB Ethernet hoặc bật Wi-Fi trên máy, sau đó bấm \"Quét lại\".";
                     color: Theme.text-secondary;
-                    font-size: 12.5px;
+                    font-size: 11.5px;
                     horizontal-alignment: center;
                     wrap: word-wrap;
                 }
@@ -396,8 +304,11 @@ export component NicSelectScreen inherits VerticalLayout {
             border-color: Theme.warning-border;
 
             HorizontalLayout {
-                padding: 12px;
-                spacing: 10px;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                spacing: Theme.space-md;
                 alignment: start;
 
                 VerticalLayout {
@@ -405,20 +316,20 @@ export component NicSelectScreen inherits VerticalLayout {
                     padding-top: 1px;
                     Image {
                         source: @image-url("../icons/alert.svg");
-                        width: 18px;
-                        height: 18px;
+                        width: 15px;
+                        height: 15px;
                         colorize: Theme.warning;
                     }
                 }
 
                 VerticalLayout {
                     horizontal-stretch: 1;
-                    spacing: 3px;
+                    spacing: Theme.space-2xs;
 
                     Text {
                         text: "Không tìm thấy kết nối Ethernet nào trên máy";
                         color: #92400E;
-                        font-size: 13px;
+                        font-size: 12px;
                         font-weight: 700;
                         wrap: word-wrap;
                     }
@@ -426,7 +337,7 @@ export component NicSelectScreen inherits VerticalLayout {
                     Text {
                         text: "Hãy kiểm tra lại cáp mạng / đầu chuyển USB Ethernet rồi bấm \"Quét lại\", hoặc chủ động chọn Wi-Fi bên dưới nếu bạn muốn đổi IP cho Wi-Fi.";
                         color: #92400E;
-                        font-size: 12px;
+                        font-size: 11px;
                         wrap: word-wrap;
                     }
                 }
@@ -441,8 +352,8 @@ export component NicSelectScreen inherits VerticalLayout {
 
             list-box := VerticalLayout {
                 width: parent.width;
-                spacing: 10px;
-                padding-bottom: 6px;
+                spacing: 7px;
+                padding-bottom: 4px;
 
                 for adapter[idx] in root.adapters: NicOptionRow {
                     item: adapter;
@@ -456,7 +367,7 @@ export component NicSelectScreen inherits VerticalLayout {
 
     // Anchored Footer
     Rectangle {
-        height: 62px;
+        height: Theme.footer-height;
         background: Theme.bg-surface;
 
         Rectangle {
@@ -467,8 +378,8 @@ export component NicSelectScreen inherits VerticalLayout {
         }
 
         HorizontalLayout {
-            padding-left: 24px;
-            padding-right: 24px;
+            padding-left: Theme.space-xl;
+            padding-right: Theme.space-xl;
             alignment: space-between;
 
             Text {
@@ -478,7 +389,7 @@ export component NicSelectScreen inherits VerticalLayout {
                         ? "Vui lòng chọn một kết nối để tiếp tục"
                         : "Đã tìm thấy " + root.adapters.length + " kết nối vật lý";
                 color: root.selected-index < 0 && root.adapters.length > 0 ? Theme.warning : Theme.text-muted;
-                font-size: 12.5px;
+                font-size: 11.5px;
                 font-weight: root.selected-index < 0 && root.adapters.length > 0 ? 600 : 400;
                 vertical-alignment: center;
             }

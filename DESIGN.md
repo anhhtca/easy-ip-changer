@@ -27,16 +27,17 @@
 ## Typography
 
 - **Family:** Self-hosted **Be Vietnam Pro** (`Regular 400`, `Medium 500`, `SemiBold 600`, `Bold 700`) embedded directly inside the binary (`ui/fonts/`) for crisp Vietnamese diacritics on every Windows 10/11 Pro machine.
-- **Scale:** Window title `16px` Bold, Screen headings `18–20px` Bold, Section headings `14.5px` Bold, IP octet inputs `17px` SemiBold, Form inputs `14px` Medium, Labels `13px` SemiBold, Helper text & badges `11–12.5px`.
+- **Scale:** Window title `14.5px` Bold, Screen headings `16–16.5px` Bold, Section headings `13px` Bold, IP octet inputs `15px` SemiBold, Form inputs `13px` Medium, Labels `12px` SemiBold, Helper text & badges `10–11.5px`.
 
 ## Iconography
 
 - **App Icon (`assets/app.ico`, `assets/app-icon.png`):** Custom Windows 11 Fluent-style rounded tile in Deep Burgundy (`#6B0F26`) to Agribank Bordeaux (`#AE1C3F`) gradient featuring bold white `"IP"` lettering above Agribank Gold (`#FCD34D`) and Emerald Mint (`#34D399`) bidirectional swap arrows. Multi-resolution `.ico` (`16`, `24`, `32`, `48`, `64`, `128` px 32-bit BGRA DIB + `256` px PNG) embedded into the Windows `.exe` via `winresource`, paired with `assets/app-icon.png` for the Slint `Window` icon.
-- **Header Brand Mark (`ui/icons/agribank-logo.svg`):** Vector Agribank square emblem (`34×34px`) displayed on the Agribank Bordeaux (`#AE1C3F`) top header rail beside the application title.
+- **Header Brand Mark (`ui/icons/agribank-logo.svg`):** Vector Agribank square emblem (`28×28px`) displayed on the Agribank Bordeaux (`#AE1C3F`) top header rail beside the application title.
 - **UI Icons:** Authored monochrome SVG icon set (`ui/icons/`, `24×24` viewBox, uniform `1.8–2.2px` round stroke) tinted dynamically via Slint `colorize`: `ethernet`, `wifi`, `edit`, `lock`, `check`, `chevron-down`, `refresh`, `alert`, `arrow-left`, `arrow-right`. Zero emoji or Unicode symbol substitutes.
 
 ## Layout & Components
 
-- **Window dimensions:** `560 × 758 px` preferred (`520 × 678 px` minimum) so all 3 Step-2 sections (4-octet IP, locked Subnet/Gateway/DNS, and the `"Thay đổi ưu tiên Eth và Wifi"` checkbox) fit above the fold without scrolling, while expanding the accordion scrolls smoothly above an anchored `62px` action footer and a persistent `28px` WinForms-style status bar footer (`Theme.bg-subtle`, `1px` top border).
-- **No nested cards:** Flat white surfaces (`10px` radius, `1px` `#E6DFE2` border) separated by spacing or `1px` hairline dividers (`#F2EEF0`).
+- **Window dimensions:** `500 × 592 px` preferred (`460 × 552 px` minimum) so all 3 Step-2 sections (4-octet IP, locked Subnet/Gateway/DNS, and the `"Thay đổi ưu tiên Eth và Wifi"` checkbox) fit above the fold on standard Windows laptops (including 1366×768 and 1080p@150% scaling) without scrolling, while expanding the accordion scrolls smoothly above an anchored `48px` action footer and a persistent `24px` WinForms-style status bar footer (`Theme.bg-subtle`, `1px` top border).
+- **Compact spacing & control tokens (`ui/theme.slint`):** 4px-base scale (`space-2xs: 2px`, `space-xs: 4px`, `space-sm: 6px`, `space-md: 8px`, `space-lg: 12px`, `space-xl: 16px` outer gutters); desktop-grade control heights (`control-height: 30px`, `octet-height: 34px`, `btn-height: 32px`, `btn-compact-height: 28px`, `edit-btn-height: 22px`).
+- **No nested cards:** Flat white surfaces (`8px` radius, `1px` `#E6DFE2` border) separated by `8px` spacing or `1px` hairline dividers (`#F2EEF0`).
 - **Motion:** Functional state transitions only (`140–180ms ease-out` on hover/focus/selection, smooth accordion height unfold and chevron rotation).

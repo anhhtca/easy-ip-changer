@@ -550,8 +550,8 @@ mod ui_snapshot_tests {
         };
         let is_doc_mode = std::env::var("DUMP_UI_PREVIEWS_PRODUCTION").is_ok();
 
-        let width: u32 = 560;
-        let height: u32 = 758;
+        let width: u32 = 500;
+        let height: u32 = 592;
         let sw_window = MinimalSoftwareWindow::new(RepaintBufferType::NewBuffer);
         if scale > 1 {
             sw_window.dispatch_event(slint::platform::WindowEvent::ScaleFactorChanged {
@@ -629,7 +629,7 @@ mod ui_snapshot_tests {
         );
 
         // 4. Màn hình 2: Bật accordion Thay đổi ưu tiên (chiều cao đủ lớn để thấy trọn 3 tùy chọn)
-        let tall_h: u32 = 968;
+        let tall_h: u32 = 774;
         sw_window.set_size(WindowSize::Physical(PhysicalSize::new(
             width * scale,
             tall_h * scale,

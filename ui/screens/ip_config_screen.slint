@@ -24,22 +24,22 @@ component PriorityOptionRow inherits Rectangle {
     animate border-color { duration: 140ms; easing: ease-out; }
 
     HorizontalLayout {
-        padding-left: 12px;
-        padding-right: 12px;
-        padding-top: 9px;
-        padding-bottom: 9px;
-        spacing: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+        spacing: Theme.space-md;
         alignment: start;
 
         VerticalLayout {
             alignment: center;
-            width: 18px;
+            width: 16px;
 
             Rectangle {
-                width: 16px;
-                height: 16px;
-                border-radius: 8px;
-                border-width: root.selected ? 5px : 1.5px;
+                width: 14px;
+                height: 14px;
+                border-radius: 7px;
+                border-width: root.selected ? 4px : 1.5px;
                 border-color: root.selected ? Theme.accent : Theme.border-strong;
                 background: Theme.bg-surface;
             }
@@ -47,16 +47,16 @@ component PriorityOptionRow inherits Rectangle {
 
         VerticalLayout {
             horizontal-stretch: 1;
-            spacing: 2px;
+            spacing: 1px;
 
             HorizontalLayout {
-                spacing: 6px;
+                spacing: Theme.space-sm;
                 alignment: start;
 
                 Text {
                     text: root.title;
                     color: Theme.text-primary;
-                    font-size: 13px;
+                    font-size: 12px;
                     font-weight: 600;
                     vertical-alignment: center;
                 }
@@ -67,8 +67,8 @@ component PriorityOptionRow inherits Rectangle {
                     background: Theme.success-bg;
 
                     HorizontalLayout {
-                        padding-left: 7px;
-                        padding-right: 7px;
+                        padding-left: 6px;
+                        padding-right: 6px;
                         Text {
                             text: "Mặc định";
                             color: Theme.success;
@@ -83,7 +83,7 @@ component PriorityOptionRow inherits Rectangle {
             Text {
                 text: root.subtitle;
                 color: Theme.text-muted;
-                font-size: 11.5px;
+                font-size: 11px;
                 wrap: word-wrap;
             }
         }
@@ -149,17 +149,17 @@ export component IpConfigScreen inherits VerticalLayout {
 
     // Compact selected-adapter bar (flat band, not a nested card)
     Rectangle {
-        height: 42px;
+        height: 34px;
         background: Theme.bg-subtle;
 
         HorizontalLayout {
-            padding-left: 24px;
-            padding-right: 24px;
+            padding-left: Theme.space-xl;
+            padding-right: Theme.space-xl;
             alignment: space-between;
-            spacing: 10px;
+            spacing: Theme.space-md;
 
             HorizontalLayout {
-                spacing: 8px;
+                spacing: Theme.space-sm;
                 alignment: start;
 
                 VerticalLayout {
@@ -168,8 +168,8 @@ export component IpConfigScreen inherits VerticalLayout {
                         source: root.adapter-is-ethernet
                             ? @image-url("../icons/ethernet.svg")
                             : @image-url("../icons/wifi.svg");
-                        width: 16px;
-                        height: 16px;
+                        width: 14px;
+                        height: 14px;
                         colorize: Theme.accent;
                     }
                 }
@@ -177,7 +177,7 @@ export component IpConfigScreen inherits VerticalLayout {
                 Text {
                     text: root.adapter-name;
                     color: Theme.text-primary;
-                    font-size: 13px;
+                    font-size: 12px;
                     font-weight: 700;
                     vertical-alignment: center;
                 }
@@ -185,14 +185,14 @@ export component IpConfigScreen inherits VerticalLayout {
                 Text {
                     text: "(" + root.adapter-type-label + ")";
                     color: Theme.text-secondary;
-                    font-size: 12px;
+                    font-size: 11.5px;
                     vertical-alignment: center;
                 }
 
                 Text {
                     text: "•  " + root.adapter-current-ip;
                     color: Theme.text-muted;
-                    font-size: 12px;
+                    font-size: 11.5px;
                     vertical-alignment: center;
                 }
             }
@@ -200,17 +200,17 @@ export component IpConfigScreen inherits VerticalLayout {
             VerticalLayout {
                 alignment: center;
                 Rectangle {
-                    height: 26px;
+                    height: 22px;
                     border-radius: Theme.radius-sm;
                     background: change-ta.has-hover && !root.saving ? Theme.accent-soft : transparent;
 
                     HorizontalLayout {
-                        padding-left: 8px;
-                        padding-right: 8px;
+                        padding-left: 7px;
+                        padding-right: 7px;
                         Text {
                             text: "Đổi mạng";
                             color: root.saving ? Theme.text-muted : Theme.accent;
-                            font-size: 12px;
+                            font-size: 11.5px;
                             font-weight: 600;
                             vertical-alignment: center;
                         }
@@ -242,11 +242,11 @@ export component IpConfigScreen inherits VerticalLayout {
 
         form-body := VerticalLayout {
             width: parent.width;
-            padding-left: 24px;
-            padding-right: 24px;
-            padding-top: 14px;
-            padding-bottom: 16px;
-            spacing: 10px;
+            padding-left: Theme.space-xl;
+            padding-right: Theme.space-xl;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            spacing: Theme.space-md;
 
             // Section 1: IP Address (4 Segments)
             Rectangle {
@@ -256,23 +256,26 @@ export component IpConfigScreen inherits VerticalLayout {
                 border-color: root.ip-has-error ? Theme.danger : Theme.border-subtle;
 
                 VerticalLayout {
-                    padding: 14px;
-                    spacing: 8px;
+                    padding-left: Theme.space-lg;
+                    padding-right: Theme.space-lg;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                    spacing: Theme.space-sm;
 
                     VerticalLayout {
-                        spacing: 2px;
+                        spacing: Theme.space-2xs;
 
                         Text {
                             text: "Địa chỉ IP mới";
                             color: Theme.text-primary;
-                            font-size: 14.5px;
+                            font-size: 13px;
                             font-weight: 700;
                         }
 
                         Text {
                             text: "Nhập 4 nhóm số (0–255). Gõ dấu chấm (.) để chuyển ô nhanh hoặc dán nguyên địa chỉ IP.";
                             color: Theme.text-muted;
-                            font-size: 11.5px;
+                            font-size: 11px;
                             wrap: word-wrap;
                         }
                     }
@@ -297,8 +300,11 @@ export component IpConfigScreen inherits VerticalLayout {
                 border-color: Theme.border-subtle;
 
                 VerticalLayout {
-                    padding: 14px;
-                    spacing: 10px;
+                    padding-left: Theme.space-lg;
+                    padding-right: Theme.space-lg;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                    spacing: Theme.space-sm;
 
                     LockableField {
                         label: "Subnet Mask";
@@ -354,27 +360,27 @@ export component IpConfigScreen inherits VerticalLayout {
 
                     // Checkbox Header Row
                     Rectangle {
-                        height: 46px;
+                        height: 36px;
                         border-radius: Theme.radius-md;
                         background: (prio-ta.has-hover && root.can-change-priority && !root.saving)
                             ? #FAF7F8 : transparent;
 
                         HorizontalLayout {
-                            padding-left: 14px;
-                            padding-right: 14px;
-                            spacing: 10px;
+                            padding-left: Theme.space-lg;
+                            padding-right: Theme.space-lg;
+                            spacing: Theme.space-md;
                             alignment: space-between;
 
                             HorizontalLayout {
-                                spacing: 10px;
+                                spacing: Theme.space-md;
                                 alignment: start;
 
                                 VerticalLayout {
                                     alignment: center;
 
                                     Rectangle {
-                                        width: 18px;
-                                        height: 18px;
+                                        width: 16px;
+                                        height: 16px;
                                         border-radius: 4px;
                                         border-width: 1.5px;
                                         border-color: !root.can-change-priority ? #CBD5E1
@@ -386,8 +392,8 @@ export component IpConfigScreen inherits VerticalLayout {
 
                                         if root.change-priority: Image {
                                             source: @image-url("../icons/check.svg");
-                                            width: 12px;
-                                            height: 12px;
+                                            width: 10px;
+                                            height: 10px;
                                             colorize: #FFFFFF;
                                             x: 3px;
                                             y: 3px;
@@ -398,7 +404,7 @@ export component IpConfigScreen inherits VerticalLayout {
                                 Text {
                                     text: "Thay đổi ưu tiên Eth và Wifi";
                                     color: root.can-change-priority ? Theme.text-primary : Theme.text-muted;
-                                    font-size: 13.5px;
+                                    font-size: 12.5px;
                                     font-weight: 600;
                                     vertical-alignment: center;
                                 }
@@ -410,8 +416,8 @@ export component IpConfigScreen inherits VerticalLayout {
                                     source: root.change-priority
                                         ? @image-url("../icons/chevron-up.svg")
                                         : @image-url("../icons/chevron-down.svg");
-                                    width: 16px;
-                                    height: 16px;
+                                    width: 14px;
+                                    height: 14px;
                                     colorize: root.change-priority ? Theme.accent : Theme.text-muted;
                                 }
                             }
@@ -425,14 +431,14 @@ export component IpConfigScreen inherits VerticalLayout {
                     }
 
                     if !root.can-change-priority: VerticalLayout {
-                        padding-left: 44px;
-                        padding-right: 16px;
-                        padding-bottom: 12px;
+                        padding-left: 36px;
+                        padding-right: Theme.space-lg;
+                        padding-bottom: 8px;
 
                         Text {
                             text: "Máy cần có đồng thời cả Ethernet và Wi-Fi để thiết lập thứ tự ưu tiên.";
                             color: Theme.text-muted;
-                            font-size: 11.5px;
+                            font-size: 11px;
                             wrap: word-wrap;
                         }
                     }
@@ -447,10 +453,10 @@ export component IpConfigScreen inherits VerticalLayout {
                         animate height { duration: 180ms; easing: ease-out; }
 
                         accordion-inner := VerticalLayout {
-                            padding-left: 16px;
-                            padding-right: 16px;
-                            padding-bottom: 14px;
-                            spacing: 8px;
+                            padding-left: Theme.space-lg;
+                            padding-right: Theme.space-lg;
+                            padding-bottom: 10px;
+                            spacing: Theme.space-sm;
 
                             Rectangle {
                                 height: 1px;
@@ -460,7 +466,7 @@ export component IpConfigScreen inherits VerticalLayout {
                             Text {
                                 text: root.priority-pair-caption;
                                 color: Theme.text-secondary;
-                                font-size: 12px;
+                                font-size: 11.5px;
                                 font-weight: 500;
                             }
 
@@ -501,14 +507,17 @@ export component IpConfigScreen inherits VerticalLayout {
                 border-color: Theme.danger-border;
 
                 HorizontalLayout {
-                    padding: 12px;
-                    spacing: 10px;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    padding-top: 8px;
+                    padding-bottom: 8px;
+                    spacing: Theme.space-md;
                     alignment: start;
 
                     Image {
                         source: @image-url("../icons/alert.svg");
-                        width: 18px;
-                        height: 18px;
+                        width: 15px;
+                        height: 15px;
                         colorize: Theme.danger;
                         vertical-alignment: top;
                     }
@@ -516,7 +525,7 @@ export component IpConfigScreen inherits VerticalLayout {
                     Text {
                         text: root.error-message;
                         color: Theme.danger;
-                        font-size: 12.5px;
+                        font-size: 11.5px;
                         font-weight: 500;
                         wrap: word-wrap;
                         horizontal-stretch: 1;
@@ -528,7 +537,7 @@ export component IpConfigScreen inherits VerticalLayout {
 
     // Anchored Footer
     Rectangle {
-        height: 62px;
+        height: Theme.footer-height;
         background: Theme.bg-surface;
 
         Rectangle {
@@ -539,8 +548,8 @@ export component IpConfigScreen inherits VerticalLayout {
         }
 
         HorizontalLayout {
-            padding-left: 24px;
-            padding-right: 24px;
+            padding-left: Theme.space-xl;
+            padding-right: Theme.space-xl;
             alignment: space-between;
 
             VerticalLayout {
@@ -560,7 +569,7 @@ export component IpConfigScreen inherits VerticalLayout {
                     label: root.saving ? "Đang ghi..." : "Ghi";
                     loading: root.saving;
                     enabled: !root.saving;
-                    min-width: 136px;
+                    min-width: 112px;
                     clicked => { root.save-clicked(); }
                 }
             }

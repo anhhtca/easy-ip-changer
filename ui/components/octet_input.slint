@@ -11,10 +11,10 @@ component OctetSlot inherits Rectangle {
         ti.focus();
     }
 
-    height: 42px;
+    height: Theme.octet-height;
     horizontal-stretch: 1;
     border-radius: Theme.radius-sm;
-    border-width: ti.has-focus ? 2px : 1px;
+    border-width: ti.has-focus ? 1.5px : 1px;
     border-color: root.has-error ? Theme.danger
         : ti.has-focus ? Theme.border-focus
         : Theme.border-strong;
@@ -24,23 +24,23 @@ component OctetSlot inherits Rectangle {
 
     if root.value == "" && !ti.has-focus: Text {
         text: root.placeholder;
-        color: #94A3B8;
-        font-size: 16px;
+        color: Theme.text-muted;
+        font-size: 14.5px;
         font-weight: 500;
         horizontal-alignment: center;
         vertical-alignment: center;
     }
 
     ti := TextInput {
-        width: parent.width - 12px;
+        width: parent.width - 8px;
         height: parent.height;
-        x: 6px;
+        x: 4px;
         text <=> root.value;
         enabled: root.enabled;
         single-line: true;
         horizontal-alignment: center;
         vertical-alignment: center;
-        font-size: 17px;
+        font-size: 15px;
         font-weight: 600;
         color: Theme.text-primary;
         selection-background-color: Theme.accent-soft;
@@ -71,7 +71,7 @@ export component OctetInput inherits HorizontalLayout {
         }
     }
 
-    spacing: 8px;
+    spacing: Theme.space-sm;
     alignment: stretch;
 
     s1 := OctetSlot {
@@ -85,11 +85,11 @@ export component OctetInput inherits HorizontalLayout {
     Text {
         text: ".";
         color: Theme.text-muted;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
         vertical-alignment: bottom;
         horizontal-alignment: center;
-        width: 8px;
+        width: 6px;
     }
 
     s2 := OctetSlot {
@@ -103,11 +103,11 @@ export component OctetInput inherits HorizontalLayout {
     Text {
         text: ".";
         color: Theme.text-muted;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
         vertical-alignment: bottom;
         horizontal-alignment: center;
-        width: 8px;
+        width: 6px;
     }
 
     s3 := OctetSlot {
@@ -121,11 +121,11 @@ export component OctetInput inherits HorizontalLayout {
     Text {
         text: ".";
         color: Theme.text-muted;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
         vertical-alignment: bottom;
         horizontal-alignment: center;
-        width: 8px;
+        width: 6px;
     }
 
     s4 := OctetSlot {
