@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 use std::net::Ipv4Addr;
 use std::os::windows::ffi::OsStrExt;
 use std::os::windows::process::CommandExt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use windows::Win32::Foundation::{CloseHandle, ERROR_BUFFER_OVERFLOW, ERROR_CANCELLED, HANDLE, NO_ERROR};
@@ -67,7 +67,7 @@ impl SystemNetworkBackend for WindowsBackend {
                 None,
                 w!("runas"),
                 PCWSTR(wide_path.as_ptr()),
-                PCWSTR::null(),
+                w!("--uac-relaunched"),
                 PCWSTR::null(),
                 SW_SHOWNORMAL,
             )
@@ -246,6 +246,31 @@ pub fn open_url(url: &str) -> Result<(), String> {
         Ok(())
     } else {
         Err(format!("Không thể mở liên kết {url} (mã lỗi {code})."))
+    }
+}
+
+pub fn open_file(path: &Path) -> Result<(), String> {
+    let wide_path: Vec<u16> = OsStr::new(path.as_os_str())
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+
+    let result = unsafe {
+        ShellExecuteW(
+            None,
+            w!("open"),
+            PCWSTR(wide_path.as_ptr()),
+            PCWSTR::null(),
+            PCWSTR::null(),
+            SW_SHOWNORMAL,
+        )
+    };
+
+    let code = result.0 as isize;
+    if code > 32 {
+        Ok(())
+    } else {
+        Err(format!("Không thể mở tài liệu hướng dẫn (mã lỗi {code})."))
     }
 }
 

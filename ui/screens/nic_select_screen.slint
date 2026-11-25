@@ -184,10 +184,12 @@ export component NicSelectScreen inherits VerticalLayout {
     in property <[NicItem]> adapters;
     in-out property <int> selected-index: -1;
     in property <bool> has-ethernet: true;
+    in property <bool> has-user-guide: false;
     in property <string> scan-error: "";
 
     callback refresh-clicked();
     callback continue-clicked();
+    callback guide-clicked();
 
     spacing: 0px;
 
@@ -234,6 +236,99 @@ export component NicSelectScreen inherits VerticalLayout {
                     leading-icon: @image-url("../icons/refresh.svg");
                     clicked => { root.refresh-clicked(); }
                 }
+            }
+        }
+
+        if root.has-user-guide: Rectangle {
+            border-radius: Theme.radius-md;
+            background: guide-banner-ta.pressed ? #F5DCE3
+                : guide-banner-ta.has-hover ? #FAE8EE
+                : Theme.bg-selected;
+            border-width: 1px;
+            border-color: guide-banner-ta.has-hover ? #DFA5B4 : #EFC8D2;
+
+            animate background { duration: 140ms; easing: ease-out; }
+            animate border-color { duration: 140ms; easing: ease-out; }
+
+            HorizontalLayout {
+                padding-left: 12px;
+                padding-right: 12px;
+                padding-top: 9px;
+                padding-bottom: 9px;
+                spacing: 10px;
+                alignment: space-between;
+
+                HorizontalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 10px;
+                    alignment: start;
+
+                    VerticalLayout {
+                        alignment: center;
+                        Rectangle {
+                            width: 30px;
+                            height: 30px;
+                            border-radius: Theme.radius-sm;
+                            background: Theme.accent-soft;
+
+                            Image {
+                                source: @image-url("../icons/book-open.svg");
+                                width: 15px;
+                                height: 15px;
+                                colorize: Theme.accent;
+                                x: (parent.width - self.width) / 2;
+                                y: (parent.height - self.height) / 2;
+                            }
+                        }
+                    }
+
+                    VerticalLayout {
+                        horizontal-stretch: 1;
+                        alignment: center;
+                        spacing: 1px;
+
+                        Text {
+                            text: "Lần đầu sử dụng? Xem hướng dẫn nhanh (PDF)";
+                            color: Theme.text-primary;
+                            font-size: 12.5px;
+                            font-weight: 600;
+                        }
+
+                        Text {
+                            text: "Hướng dẫn ngắn gọn từng bước kèm ảnh minh họa";
+                            color: Theme.text-secondary;
+                            font-size: 11.5px;
+                        }
+                    }
+                }
+
+                HorizontalLayout {
+                    spacing: 4px;
+                    alignment: end;
+
+                    Text {
+                        text: "Mở tài liệu";
+                        color: Theme.accent;
+                        font-size: 12px;
+                        font-weight: 700;
+                        vertical-alignment: center;
+                    }
+
+                    VerticalLayout {
+                        alignment: center;
+                        Image {
+                            source: @image-url("../icons/arrow-right.svg");
+                            width: 13px;
+                            height: 13px;
+                            colorize: Theme.accent;
+                        }
+                    }
+                }
+            }
+
+            guide-banner-ta := TouchArea {
+                mouse-cursor: pointer;
+                clicked => { root.guide-clicked(); }
             }
         }
 

@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hướng dẫn sử dụng Easy IP Changer</title>
+  <style>
+    @font-face {
+      font-family: "Be Vietnam Pro";
+      src: url("../../ui/fonts/BeVietnamPro-Regular.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Be Vietnam Pro";
+      src: url("../../ui/fonts/BeVietnamPro-Medium.ttf") format("truetype");
+      font-weight: 500;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Be Vietnam Pro";
+      src: url("../../ui/fonts/BeVietnamPro-SemiBold.ttf") format("truetype");
+      font-weight: 600;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Be Vietnam Pro";
+      src: url("../../ui/fonts/BeVietnamPro-Bold.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    :root {
+      --ink: #0F172A;
+      --ink-secondary: #334155;
+      --ink-muted: #64748B;
+      --surface: #FFFFFF;
+      --surface-soft: #F8FAFC;
+      --border: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --accent: #BE123C;
+      --accent-dark: #881337;
+      --accent-soft: #FFF1F2;
+      --accent-border: #FECDD3;
+      --success: #047857;
+      --success-bg: #ECFDF5;
+      --success-border: #A7F3D0;
+      --warn: #B45309;
+      --warn-bg: #FFFBEB;
+      --warn-border: #FDE68A;
+      --info: #1D4ED8;
+      --info-bg: #EFF6FF;
+      --info-border: #BFDBFE;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #E2E8F0;
+      font-size: 10pt;
+      line-height: 1.5;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      background: var(--surface);
+      padding: 15mm 16mm 14mm 16mm;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    /* Running Header (Pages 2-4) */
+    .running-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 3.5mm;
+      margin-bottom: 5.5mm;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .running-brand {
+      display: flex;
+      align-items: center;
+      gap: 2.5mm;
+      font-size: 9pt;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .running-brand img {
+      width: 5.5mm;
+      height: 5.5mm;
+      border-radius: 1.2mm;
+    }
+
+    .running-section {
+      font-size: 8.5pt;
+      font-weight: 500;
+      color: var(--ink-muted);
+    }
+
+    /* Running Footer */
+    .page-footer {
+      margin-top: auto;
+      padding-top: 3mm;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8pt;
+      color: var(--ink-muted);
+    }
+
+    /* Page 1 Hero Banner (Neutral Modern Slate) */
+    .hero {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #FFFFFF;
+      border-radius: 4mm;
+      padding: 7.5mm 8mm;
+      display: flex;
+      align-items: center;
+      gap: 5.5mm;
+      margin-bottom: 6mm;
+    }
+
+    .hero-icon {
+      width: 17mm;
+      height: 17mm;
+      border-radius: 3.5mm;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+    }
+
+    .hero-kicker {
+      font-size: 8pt;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FDA4AF;
+      margin-bottom: 1mm;
+    }
+
+    .hero h1 {
+      font-size: 19pt;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1.5mm;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-sub {
+      font-size: 9.5pt;
+      color: #CBD5E1;
+      font-weight: 400;
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 2.5mm;
+      margin-top: 3.5mm;
+      flex-wrap: wrap;
+    }
+
+    .hero-pill {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #F8FAFC;
+      font-size: 7.8pt;
+      font-weight: 500;
+      padding: 1mm 2.8mm;
+      border-radius: 99px;
+    }
+
+    /* Section Headings */
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      margin-bottom: 3.5mm;
+    }
+
+    .step-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: #FFFFFF;
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 1.2mm 3mm;
+      border-radius: 99px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .step-tag.success {
+      background: var(--success);
+    }
+
+    .step-tag.slate {
+      background: #1E293B;
+    }
+
+    h2 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+
+    .lead {
+      font-size: 9.5pt;
+      color: var(--ink-secondary);
+      margin-bottom: 5mm;
+    }
+
+    /* Page 1 Overview Strip */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3.5mm;
+      margin-bottom: 6.5mm;
+    }
+
+    .overview-card {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 3mm;
+      padding: 3.8mm 4mm;
+    }
+
+    .overview-num {
+      display: inline-flex;
+      width: 6mm;
+      height: 6mm;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      font-size: 8.5pt;
+      font-weight: 700;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2mm;
+    }
+
+    .overview-card h3 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 1mm;
+    }
+
+    .overview-card p {
+      font-size: 8.4pt;
+      color: var(--ink-secondary);
+      line-height: 1.45;
+    }
+
+    /* Prep Checklist Box */
+    .prep-box {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: 3mm;
+      padding: 3.8mm 4.5mm;
+      margin-bottom: 6mm;
+    }
+
+    .prep-box-title {
+      font-size: 9.2pt;
+      font-weight: 700;
+      color: #1E3A8A;
+      margin-bottom: 1.8mm;
+    }
+
+    .prep-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2mm 5mm;
+      font-size: 8.6pt;
+      color: #1E3A8A;
+    }
+
+    .prep-list li {
+      position: relative;
+      padding-left: 4.5mm;
+    }
+
+    .prep-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-weight: 700;
+      color: var(--info);
+    }
+
+    /* Launch Steps + UAC Illustration on Page 1 */
+    .two-col-launch {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 6mm;
+      align-items: start;
+      margin-bottom: 5.5mm;
+    }
+
+    /* Numbered Action List */
+    .action-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5mm;
+    }
+
+    .action-item {
+      display: flex;
+      gap: 3mm;
+      align-items: flex-start;
+    }
+
+    .badge-num {
+      width: 6.2mm;
+      height: 6.2mm;
+      min-width: 6.2mm;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #FFFFFF;
+      font-size: 8.5pt;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.3mm;
+      box-shadow: 0 1px 3px rgba(190, 18, 60, 0.3);
+    }
+
+    .action-content h4 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 0.6mm;
+    }
+
+    .action-content p {
+      font-size: 8.7pt;
+      color: var(--ink-secondary);
+      line-height: 1.48;
+    }
+
+    .kbd {
+      display: inline-block;
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-bottom-width: 2px;
+      border-radius: 1.2mm;
+      padding: 0 1.4mm;
+      font-size: 8pt;
+      font-weight: 600;
+      color: var(--ink);
+      font-family: inherit;
+    }
+
+    .code-inline {
+      display: inline-block;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      border-radius: 1.2mm;
+      padding: 0 1.4mm;
+      font-size: 8.3pt;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* Mock Windows UAC Dialog Illustration */
+    .uac-card {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 2.5mm;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1);
+    }
+
+    .uac-top {
+      background: #0078D4;
+      color: #FFFFFF;
+      padding: 3.5mm 4.5mm;
+    }
+
+    .uac-top-label {
+      font-size: 7.4pt;
+      opacity: 0.9;
+      margin-bottom: 1mm;
+    }
+
+    .uac-top-title {
+      font-size: 9.6pt;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .uac-body {
+      padding: 3.8mm 4.5mm 4.2mm 4.5mm;
+      background: #F8FAFC;
+    }
+
+    .uac-app-row {
+      display: flex;
+      align-items: center;
+      gap: 2.8mm;
+      margin-bottom: 3.5mm;
+    }
+
+    .uac-app-row img {
+      width: 8mm;
+      height: 8mm;
+      border-radius: 1.5mm;
+    }
+
+    .uac-app-name {
+      font-size: 9pt;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .uac-app-sub {
+      font-size: 7.5pt;
+      color: var(--ink-muted);
+    }
+
+    .uac-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5mm;
+      position: relative;
+    }
+
+    .uac-btn {
+      text-align: center;
+      padding: 2mm 0;
+      font-size: 8.6pt;
+      font-weight: 600;
+      border-radius: 1.2mm;
+      border: 1px solid #CBD5E1;
+      background: #E2E8F0;
+      color: #475569;
+    }
+
+    .uac-btn.yes {
+      background: #0078D4;
+      color: #FFFFFF;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 0 2.5px rgba(190, 18, 60, 0.22);
+      position: relative;
+    }
+
+    .uac-caption {
+      margin-top: 2mm;
+      font-size: 7.8pt;
+      color: var(--ink-muted);
+      text-align: center;
+    }
+
+    /* Note / Tip Banner */
+    .tip-box {
+      border-radius: 3mm;
+      padding: 3.5mm 4.5mm;
+      display: flex;
+      gap: 3.2mm;
+      align-items: flex-start;
+    }
+
+    .tip-box.warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: #78350F;
+    }
+
+    .tip-box.neutral {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--ink-secondary);
+    }
+
+    .tip-icon {
+      width: 5.5mm;
+      height: 5.5mm;
+      min-width: 5.5mm;
+      border-radius: 50%;
+      background: #F59E0B;
+      color: #FFFFFF;
+      font-size: 8.5pt;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.3mm;
+    }
+
+    .tip-box h4 {
+      font-size: 9pt;
+      font-weight: 700;
+      margin-bottom: 0.8mm;
+    }
+
+    .tip-box p {
+      font-size: 8.4pt;
+      line-height: 1.46;
+    }
+
+    /* Step Main Two-Column Layout (Screenshot + Callouts) */
+    .step-layout {
+      display: grid;
+      grid-template-columns: 1.06fr 0.94fr;
+      gap: 6.5mm;
+      align-items: start;
+      margin-bottom: 5.5mm;
+    }
+
+    .step-layout.narrow-shot {
+      grid-template-columns: 0.96fr 1.04fr;
+      gap: 6.5mm;
+    }
+
+    .shot-frame {
+      position: relative;
+      border-radius: 3mm;
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 5px 18px rgba(15, 23, 42, 0.11);
+      background: #FFFFFF;
+      overflow: visible;
+    }
+
+    .shot-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 2.8mm;
+    }
+
+    /* Callout Pins & Highlights on Screenshots */
+    .pin {
+      position: absolute;
+      width: 6.4mm;
+      height: 6.4mm;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #FFFFFF;
+      font-size: 8.8pt;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.35);
+      transform: translate(-50%, -50%);
+      z-index: 5;
+    }
+
+    .highlight-ring {
+      position: absolute;
+      border: 2px dashed var(--accent);
+      border-radius: 2mm;
+      background: rgba(190, 18, 60, 0.04);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Sub-card for Priority Accordion (Page 3 bottom) */
+    .priority-panel {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 3.2mm;
+      padding: 4mm 4.5mm;
+      margin-top: 1mm;
+    }
+
+    .priority-panel-head {
+      display: flex;
+      align-items: center;
+      gap: 2.5mm;
+      margin-bottom: 3mm;
+    }
+
+    .priority-panel-head h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .opt-pill {
+      background: #E2E8F0;
+      color: #334155;
+      font-size: 7.4pt;
+      font-weight: 700;
+      padding: 0.6mm 2.2mm;
+      border-radius: 99px;
+      text-transform: uppercase;
+    }
+
+    .priority-grid {
+      display: grid;
+      grid-template-columns: 0.98fr 1.02fr;
+      gap: 4.5mm;
+      align-items: center;
+    }
+
+    .priority-crop {
+      border-radius: 2.5mm;
+      border: 1px solid var(--border-strong);
+      overflow: hidden;
+      background: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.07);
+    }
+
+    .priority-crop img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .mini-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2.2mm;
+    }
+
+    .mini-bullets li {
+      font-size: 8.4pt;
+      color: var(--ink-secondary);
+      line-height: 1.44;
+      padding-left: 3.5mm;
+      position: relative;
+    }
+
+    .mini-bullets li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 1.9mm;
+      width: 1.7mm;
+      height: 1.7mm;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .mini-bullets strong {
+      color: var(--ink);
+    }
+
+    /* Page 4 Troubleshooting Grid */
+    .faq-header {
+      display: flex;
+      align-items: center;
+      gap: 2.5mm;
+      margin-top: 2mm;
+      margin-bottom: 3.5mm;
+    }
+
+    .faq-header h3 {
+      font-size: 11.5pt;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5mm;
+    }
+
+    .faq-card {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 3mm;
+      padding: 3.5mm 4mm;
+    }
+
+    .faq-card h4 {
+      font-size: 8.9pt;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 1.2mm;
+    }
+
+    .faq-card p {
+      font-size: 8.2pt;
+      color: var(--ink-secondary);
+      line-height: 1.45;
+    }
+
+    .support-note {
+      margin-top: 4mm;
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      border-radius: 2.5mm;
+      padding: 2.8mm 4mm;
+      font-size: 8.3pt;
+      color: #065F46;
+      text-align: center;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== TRANG 1 ===================== -->
+  <section class="page">
+    <header class="hero">
+      <img class="hero-icon" src="../../assets/app-icon.png" alt="Easy IP Changer" />
+      <div>
+        <div class="hero-kicker">Tài liệu hướng dẫn người dùng</div>
+        <h1>Easy IP Changer</h1>
+        <div class="hero-sub">Hướng dẫn nhanh cách đổi địa chỉ IP tĩnh trên máy tính Windows 10/11 Pro</div>
+        <div class="hero-pills">
+          <span class="hero-pill">Không cần cài đặt</span>
+          <span class="hero-pill">Chỉ 2 bước thao tác</span>
+          <span class="hero-pill">Hoàn tất trong ~30 giây</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="overview-grid">
+      <div class="overview-card">
+        <div class="overview-num">1</div>
+        <h3>Mở ứng dụng &amp; Cấp quyền</h3>
+        <p>Mở file ứng dụng và bấm <strong>Yes</strong> khi Windows hỏi quyền thay đổi mạng.</p>
+      </div>
+      <div class="overview-card">
+        <div class="overview-num">2</div>
+        <h3>Chọn kết nối mạng</h3>
+        <p>Chọn mạng dây <strong>Ethernet</strong> (thường đã chọn sẵn) hoặc <strong>Wi-Fi</strong> cần đổi IP.</p>
+      </div>
+      <div class="overview-card">
+        <div class="overview-num">3</div>
+        <h3>Nhập IP &amp; Bấm Ghi</h3>
+        <p>Gõ 4 nhóm số IP mới, giữ nguyên các mục đã khóa sẵn rồi bấm <strong>Ghi</strong>.</p>
+      </div>
+    </div>
+
+    <div class="prep-box">
+      <div class="prep-box-title">Chuẩn bị trước khi bắt đầu</div>
+      <ul class="prep-list">
+        <li>Chuẩn bị sẵn <strong>địa chỉ IP mới</strong> được cấp (gồm 4 nhóm số, ví dụ <span class="code-inline">10.0.58.120</span>).</li>
+        <li>Cắm sẵn dây cáp mạng (hoặc đầu chuyển USB-LAN) vào máy nếu đổi IP cho mạng dây.</li>
+        <li>Giải nén toàn bộ thư mục chứa ứng dụng trước khi chạy (không chạy trực tiếp trong file nén <span class="code-inline">.zip</span>).</li>
+        <li>Đảm bảo tài khoản Windows của bạn có quyền bấm <strong>Yes</strong> khi cấp quyền Quản trị.</li>
+      </ul>
+    </div>
+
+    <div class="section-title-row">
+      <span class="step-tag slate">Khởi chạy</span>
+      <h2>Mở ứng dụng và cấp quyền Quản trị</h2>
+    </div>
+
+    <div class="two-col-launch">
+      <ol class="action-list">
+        <li class="action-item">
+          <span class="badge-num">1</span>
+          <div class="action-content">
+            <h4>Mở file chương trình</h4>
+            <p>Nhấp đúp chuột vào tệp <span class="code-inline">easy-ip-changer.exe</span> trong thư mục vừa giải nén.</p>
+          </div>
+        </li>
+        <li class="action-item">
+          <span class="badge-num">2</span>
+          <div class="action-content">
+            <h4>Chọn "Yes" trên hộp thoại Windows</h4>
+            <p>Để đổi được địa chỉ IP, Windows sẽ hiện bảng hỏi quyền Quản trị (<em>User Account Control</em>). Hãy bấm nút <strong>Yes</strong> (hoặc <strong>Có</strong>) để vào ứng dụng.</p>
+          </div>
+        </li>
+        <li class="action-item">
+          <span class="badge-num">3</span>
+          <div class="action-content">
+            <h4>Mở lại tài liệu bất kỳ lúc nào</h4>
+            <p>Khi giữ tệp <span class="code-inline">Huong-dan-su-dung.pdf</span> cùng thư mục với ứng dụng, bạn có thể bấm nút <strong>Hướng dẫn</strong> ngay trên cửa sổ ứng dụng để xem lại tài liệu này.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div>
+        <div class="uac-card">
+          <div class="uac-top">
+            <div class="uac-top-label">User Account Control</div>
+            <div class="uac-top-title">Do you want to allow this app to make changes to your device?</div>
+          </div>
+          <div class="uac-body">
+            <div class="uac-app-row">
+              <img src="../../assets/app-icon.png" alt="Icon" />
+              <div>
+                <div class="uac-app-name">Easy IP Changer</div>
+                <div class="uac-app-sub">Thay đổi cấu hình mạng (IPv4)</div>
+              </div>
+            </div>
+            <div class="uac-buttons">
+              <div class="uac-btn yes">Yes</div>
+              <div class="uac-btn">No</div>
+            </div>
+          </div>
+        </div>
+        <div class="uac-caption">Minh họa hộp thoại Windows — Bấm <strong>Yes</strong> để tiếp tục</div>
+      </div>
+    </div>
+
+    <div class="tip-box warn">
+      <span class="tip-icon">!</span>
+      <div>
+        <h4>Nếu lần đầu mở thấy màn hình xanh "Windows protected your PC"</h4>
+        <p>Đây là cảnh báo quen thuộc của Windows với tệp tải về mới. Bạn chỉ cần bấm dòng chữ <strong>More info</strong> (Thông tin thêm) rồi bấm nút <strong>Run anyway</strong> (Vẫn chạy) để mở bình thường.</p>
+      </div>
+    </div>
+
+    <footer class="page-footer">
+      <span>Easy IP Changer — Hướng dẫn sử dụng nhanh</span>
+      <span>Trang 1 / 4</span>
+    </footer>
+  </section>
+
+  <!-- ===================== TRANG 2 ===================== -->
+  <section class="page">
+    <div class="running-header">
+      <div class="running-brand">
+        <img src="../../assets/app-icon.png" alt="Icon" />
+        <span>Easy IP Changer</span>
+      </div>
+      <div class="running-section">Bước 1: Chọn kết nối mạng</div>
+    </div>
+
+    <div class="section-title-row">
+      <span class="step-tag">Bước 1</span>
+      <h2>Chọn kết nối mạng cần đổi IP</h2>
+    </div>
+    <p class="lead">Ứng dụng tự động lọc bỏ các card mạng ảo và chỉ hiển thị kết nối thật (dây <strong>Ethernet</strong>, <strong>USB Ethernet</strong> và <strong>Wi-Fi</strong>) để tránh chọn nhầm.</p>
+
+    <div class="step-layout">
+      <div class="shot-frame">
+        <img src="../screenshots/01_nic_select.png" alt="Màn hình Bước 1 — Chọn kết nối mạng" />
+        <!-- Callout 1: Ethernet card (selected + Nên chọn) -->
+        <div class="highlight-ring" style="left: 3.4%; top: 32.8%; width: 93.2%; height: 13.4%;"></div>
+        <div class="pin" style="left: 94.5%; top: 33.4%;">1</div>
+
+        <!-- Callout 2: Quét lại button -->
+        <div class="pin" style="left: 76.2%; top: 15.6%;">2</div>
+
+        <!-- Callout 3: Tiếp tục button -->
+        <div class="pin" style="left: 72.8%; top: 89.8%;">3</div>
+      </div>
+
+      <div>
+        <ol class="action-list">
+          <li class="action-item">
+            <span class="badge-num">1</span>
+            <div class="action-content">
+              <h4>Kiểm tra kết nối được chọn</h4>
+              <p>Nếu máy đang cắm cáp mạng, mục <strong>Ethernet</strong> có nhãn xanh <strong>Nên chọn</strong> sẽ được chọn sẵn.</p>
+              <p style="margin-top: 1.5mm;">Nếu máy có nhiều cổng mạng, hãy chọn mục đang có chấm xanh <strong>Đang kết nối</strong>.</p>
+            </div>
+          </li>
+          <li class="action-item">
+            <span class="badge-num">2</span>
+            <div class="action-content">
+              <h4>Bấm "Quét lại" nếu vừa cắm dây</h4>
+              <p>Nếu bạn mới cắm dây mạng hoặc bộ chuyển USB Ethernet sau khi mở ứng dụng, hãy bấm <strong>Quét lại</strong> để cập nhật danh sách.</p>
+            </div>
+          </li>
+          <li class="action-item">
+            <span class="badge-num">3</span>
+            <div class="action-content">
+              <h4>Bấm "Tiếp tục"</h4>
+              <p>Sau khi chọn đúng kết nối cần đổi IP, bấm nút <strong>Tiếp tục →</strong> màu đỏ ở góc dưới bên phải để chuyển sang Bước 2.</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="tip-box neutral" style="margin-top: 5mm;">
+          <div>
+            <h4>Mẹo nhận biết nhanh</h4>
+            <p>Mỗi mục đều hiển thị sẵn trạng thái (<strong>Đang kết nối</strong> / <strong>Chưa cắm dây mạng</strong>) và địa chỉ IP hiện tại của máy để bạn dễ đối chiếu.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box warn">
+      <span class="tip-icon">!</span>
+      <div>
+        <h4>Trường hợp máy không tìm thấy kết nối Ethernet</h4>
+        <p>Nếu máy chưa cắm dây mạng (chỉ có Wi-Fi), ứng dụng sẽ hiện khung cảnh báo màu vàng và <strong>không tự chọn Wi-Fi</strong> để tránh bạn đổi nhầm. Hãy cắm lại cáp mạng rồi bấm <strong>Quét lại</strong>, hoặc chủ động nhấp chọn <strong>Wi-Fi</strong> nếu bạn thật sự muốn đặt IP tĩnh cho Wi-Fi.</p>
+      </div>
+    </div>
+
+    <footer class="page-footer">
+      <span>Easy IP Changer — Hướng dẫn sử dụng nhanh</span>
+      <span>Trang 2 / 4</span>
+    </footer>
+  </section>
+
+  <!-- ===================== TRANG 3 ===================== -->
+  <section class="page">
+    <div class="running-header">
+      <div class="running-brand">
+        <img src="../../assets/app-icon.png" alt="Icon" />
+        <span>Easy IP Changer</span>
+      </div>
+      <div class="running-section">Bước 2: Nhập địa chỉ IP mới</div>
+    </div>
+
+    <div class="section-title-row">
+      <span class="step-tag">Bước 2</span>
+      <h2>Nhập địa chỉ IP mới &amp; Lưu cấu hình</h2>
+    </div>
+
+    <div class="step-layout narrow-shot" style="margin-bottom: 4.5mm;">
+      <div class="shot-frame">
+        <img src="../screenshots/03_ip_config.png" alt="Màn hình Bước 2 — Nhập địa chỉ IP" />
+        <!-- Callout 1: 4-octet IP input -->
+        <div class="highlight-ring" style="left: 5.2%; top: 28.6%; width: 89.6%; height: 7.9%;"></div>
+        <div class="pin" style="left: 95.0%; top: 28.8%;">1</div>
+
+        <!-- Callout 2: Locked Subnet/Gateway/DNS -->
+        <div class="pin" style="left: 94.8%; top: 48.2%;">2</div>
+
+        <!-- Callout 3: Priority checkbox -->
+        <div class="pin" style="left: 94.8%; top: 80.5%;">3</div>
+
+        <!-- Callout 4: Ghi button -->
+        <div class="pin" style="left: 71.5%; top: 89.8%;">4</div>
+      </div>
+
+      <div>
+        <ol class="action-list" style="gap: 3mm;">
+          <li class="action-item">
+            <span class="badge-num">1</span>
+            <div class="action-content">
+              <h4>Nhập 4 nhóm số của Địa chỉ IP mới</h4>
+              <p>Gõ lần lượt 4 nhóm số (từ 0 đến 255). Mẹo nhanh: gõ dấu chấm <span class="kbd">.</span> để tự nhảy sang ô kế tiếp, hoặc dán <span class="kbd">Ctrl</span>+<span class="kbd">V</span> nguyên địa chỉ IP (vd: <span class="code-inline">10.0.58.120</span>).</p>
+            </div>
+          </li>
+          <li class="action-item">
+            <span class="badge-num">2</span>
+            <div class="action-content">
+              <h4>Giữ nguyên các thông số đã khóa sẵn</h4>
+              <p><strong>Subnet Mask</strong>, <strong>Default Gateway</strong> (tự động điền theo 3 số đầu của IP + <span class="code-inline">.1</span>) và <strong>Máy chủ DNS</strong> đã được điền đúng chuẩn và khóa an toàn. Chỉ bấm nút <strong>Sửa</strong> khi có hướng dẫn riêng từ bộ phận kỹ thuật.</p>
+            </div>
+          </li>
+          <li class="action-item">
+            <span class="badge-num">3</span>
+            <div class="action-content">
+              <h4>Tùy chọn ưu tiên Ethernet &amp; Wi-Fi</h4>
+              <p>Nếu chỉ cần đổi IP thông thường, bạn có thể <strong>bỏ qua</strong> mục này. Chỉ tích vào khi muốn chọn mạng ưu tiên (xem mục bên dưới).</p>
+            </div>
+          </li>
+          <li class="action-item">
+            <span class="badge-num">4</span>
+            <div class="action-content">
+              <h4>Bấm nút "Ghi"</h4>
+              <p>Kiểm tra lại dãy số IP một lần nữa rồi bấm <strong>Ghi</strong>. Ứng dụng sẽ tự áp dụng cấu hình sau khoảng 1–2 giây.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="priority-panel">
+      <div class="priority-panel-head">
+        <span class="opt-pill">Tùy chọn</span>
+        <h3>Khi nào cần tích "Thay đổi ưu tiên Eth và Wifi"?</h3>
+      </div>
+
+      <div class="priority-grid">
+        <div class="priority-crop">
+          <img src="../screenshots/04_priority_crop.png" alt="Mục chọn ưu tiên Ethernet và Wi-Fi" />
+        </div>
+        <ul class="mini-bullets">
+          <li><strong>Ưu tiên Wi-Fi (Mặc định):</strong> Chọn khi máy vừa cắm dây mạng nội bộ (Ethernet) vừa bật Wi-Fi, và bạn muốn <strong>vào Internet qua Wi-Fi</strong> đồng thời vẫn dùng được mạng nội bộ qua dây.</li>
+          <li><strong>Ưu tiên Ethernet:</strong> Chọn khi bạn muốn mọi kết nối đi qua <strong>dây mạng</strong> để ổn định và tốc độ cao hơn Wi-Fi.</li>
+          <li><strong>Mặc định Windows:</strong> Khôi phục lại chế độ tự động chọn mạng ban đầu của Windows.</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer class="page-footer">
+      <span>Easy IP Changer — Hướng dẫn sử dụng nhanh</span>
+      <span>Trang 3 / 4</span>
+    </footer>
+  </section>
+
+  <!-- ===================== TRANG 4 ===================== -->
+  <section class="page">
+    <div class="running-header">
+      <div class="running-brand">
+        <img src="../../assets/app-icon.png" alt="Icon" />
+        <span>Easy IP Changer</span>
+      </div>
+      <div class="running-section">Hoàn tất &amp; Lưu ý nhanh</div>
+    </div>
+
+    <div class="section-title-row">
+      <span class="step-tag success">Hoàn tất</span>
+      <h2>Xác nhận kết quả sau khi lưu</h2>
+    </div>
+
+    <div class="step-layout narrow-shot" style="margin-bottom: 5mm;">
+      <div class="shot-frame">
+        <img src="../screenshots/05_success.png" alt="Màn hình Hoàn tất — Đã ghi cấu hình IP thành công" />
+        <!-- Callout 1: Summary table -->
+        <div class="highlight-ring" style="left: 4.0%; top: 41.4%; width: 92.0%; height: 36.2%;"></div>
+        <div class="pin" style="left: 95.0%; top: 42.0%;">1</div>
+
+        <!-- Callout 2: Cấu hình lại -->
+        <div class="pin" style="left: 25.8%; top: 89.8%;">2</div>
+
+        <!-- Callout 3: Đóng ứng dụng -->
+        <div class="pin" style="left: 69.2%; top: 89.8%;">3</div>
+      </div>
+
+      <div>
+        <ol class="action-list">
+          <li class="action-item">
+            <span class="badge-num">1</span>
+            <div class="action-content">
+              <h4>Kiểm tra lại bảng thông số</h4>
+              <p>Khi thấy dấu tích xanh <strong>"Đã ghi cấu hình IP thành công!"</strong>, toàn bộ thông số mới đã được áp dụng ngay lập tức — bạn <strong>không cần khởi động lại máy tính</strong>.</p>
+            </div>
+          </li>
+          <li class="action-item">
+            <span class="badge-num">2</span>
+            <div class="action-content">
+              <h4>Cần chỉnh sửa lại?</h4>
+              <p>Nếu phát hiện gõ nhầm số IP hoặc muốn đổi thêm thứ tự ưu tiên, hãy bấm <strong>Cấu hình lại</strong> để quay về Bước 2.</p>
+            </div>
+          </li>
+          <li class="action-item">
+            <span class="badge-num">3</span>
+            <div class="action-content">
+              <h4>Đóng ứng dụng và sử dụng mạng</h4>
+              <p>Bấm <strong>Đóng ứng dụng</strong>. Hãy mở trình duyệt hoặc phần mềm nghiệp vụ để kiểm tra kết nối đã thông suốt.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-header">
+      <span class="step-tag slate">Lưu ý nhanh</span>
+      <h3>Xử lý các tình huống thường gặp</h3>
+    </div>
+
+    <div class="faq-grid">
+      <div class="faq-card">
+        <h4>1. Windows hiện cảnh báo màu xanh khi mở file</h4>
+        <p>Trên cửa sổ <em>Windows protected your PC</em>, bấm dòng chữ <strong>More info</strong> (Thông tin thêm) rồi bấm nút <strong>Run anyway</strong> (Vẫn chạy).</p>
+      </div>
+      <div class="faq-card">
+        <h4>2. Không thấy kết nối Ethernet ở Bước 1</h4>
+        <p>Kiểm tra lại dây cáp mạng hoặc đầu chuyển USB-LAN đã cắm chặt chưa, chờ 3 giây rồi bấm nút <strong>Quét lại</strong> ở góc trên bên phải.</p>
+      </div>
+      <div class="faq-card">
+        <h4>3. Ứng dụng báo lỗi địa chỉ IP không hợp lệ</h4>
+        <p>Kiểm tra cả 4 ô IP đều đã điền đủ số từ <strong>0 đến 255</strong> và không để trống ô nào. Nếu báo trùng IP, hãy kiểm tra lại số IP được cấp.</p>
+      </div>
+      <div class="faq-card">
+        <h4>4. Đổi IP xong nhưng không vào được Internet</h4>
+        <p>Nếu máy vừa cắm dây mạng nội bộ vừa dùng Wi-Fi, hãy bấm <strong>Cấu hình lại</strong>, tích <strong>Thay đổi ưu tiên Eth và Wifi</strong> rồi chọn <strong>Ưu tiên Wi-Fi</strong>.</p>
+      </div>
+    </div>
+
+    <div class="support-note">
+      Nếu vẫn chưa kết nối được sau khi kiểm tra các mục trên, hãy chụp lại màn hình <strong>Hoàn tất</strong> (hoặc thông báo lỗi) để gửi bộ phận CNTT / hỗ trợ kỹ thuật kiểm tra giúp bạn.
+    </div>
+
+    <footer class="page-footer">
+      <span>Easy IP Changer — Hướng dẫn sử dụng nhanh</span>
+      <span>Trang 4 / 4</span>
+    </footer>
+  </section>
+
+</body>
+</html>

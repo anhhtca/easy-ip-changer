@@ -25,7 +25,7 @@ A zero-install, single-file Vietnamese desktop utility that replaces multi-level
 ## Operating Context
 
 - Launched directly by double-clicking a standalone `.exe` on Windows 10/11 Pro workstations and laptops (including USB-C / USB Ethernet docks).
-- May be launched without Administrator elevation; must detect privilege state at startup and guide UAC elevation in Vietnamese before exposing network controls.
+- Embeds `requireAdministrator` in the Windows manifest (with an automatic UAC relaunch fallback at startup) so Windows prompts UAC immediately on launch and opens directly into Step 1 without an intermediate reopen screen.
 - Must run offline with zero external runtime dependencies (no .NET, no WebView2, no VC++ Redistributable, no GPU driver dependency).
 
 ## Capabilities and Constraints

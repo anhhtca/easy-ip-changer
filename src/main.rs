@@ -15,7 +15,10 @@ use crate::domain::{
     parse_pasted_ipv4, resolve_priority_pair, sanitize_octet_digits, sort_and_pick_default_nic,
     validate_ip_consistency, validate_ip_octets, validate_optional_ipv4, validate_subnet_mask,
 };
-use crate::platform::{LaunchOptions, SystemNetworkBackend, create_backend, open_url};
+use crate::platform::{
+    LaunchOptions, SystemNetworkBackend, create_backend, find_user_guide_path, open_local_file,
+    open_url,
+};
 
 const AUTHOR_WEBSITE_URL: &str = "https://anhht.me";
 
@@ -29,6 +32,16 @@ struct AppState {
 fn main() -> Result<(), slint::PlatformError> {
     let opts = LaunchOptions::from_args();
     let backend: Arc<Box<dyn SystemNetworkBackend>> = Arc::new(create_backend(&opts));
+
+    // Tự động hỏi quyền UAC ngay khi mở app nếu tiến trình chưa có quyền Quản trị
+    // (fallback phòng trường hợp bỏ qua manifest, ví dụ __COMPAT_LAYER=RunAsInvoker).
+    if !backend.is_elevated() {
+        if !opts.uac_relaunched {
+            let _ = backend.relaunch_elevated();
+        }
+        return Ok(());
+    }
+
     let state = Rc::new(RefCell::new(AppState {
         adapters: Vec::new(),
         gateway_manually_edited: false,
@@ -36,6 +49,7 @@ fn main() -> Result<(), slint::PlatformError> {
 
     let ui = AppWindow::new()?;
     ui.set_is_preview_mode(backend.is_preview_mode());
+    ui.set_has_user_guide(find_user_guide_path().is_some());
     ui.set_subnet(SharedString::from(DEFAULT_SUBNET));
     ui.set_dns_primary(SharedString::from(DEFAULT_DNS_PRIMARY));
     ui.set_dns_secondary(SharedString::from(DEFAULT_DNS_SECONDARY));
@@ -131,39 +145,12 @@ fn main() -> Result<(), slint::PlatformError> {
         }
     };
 
-    // Bước (a): Kiểm tra quyền hiện tại khi khởi động
-    if !backend.is_elevated() {
-        ui.set_current_screen(0);
+    // Khởi tạo dữ liệu và vào thẳng Màn hình 1 (hoặc Màn hình 2 nếu preview)
+    load_adapters();
+    if opts.preview_step2 && !state.borrow().adapters.is_empty() {
+        enter_step_2();
     } else {
-        load_adapters();
-        if opts.preview_step2 && !state.borrow().adapters.is_empty() {
-            enter_step_2();
-        } else {
-            ui.set_current_screen(1);
-        }
-    }
-
-    // Callback: Màn hình 0 — Mở lại với quyền Quản trị
-    {
-        let ui_weak = ui.as_weak();
-        let backend = Arc::clone(&backend);
-        let load_adapters = load_adapters.clone();
-        ui.on_request_elevation(move || {
-            let Some(ui) = ui_weak.upgrade() else {
-                return;
-            };
-            match backend.relaunch_elevated() {
-                Ok(()) => {
-                    // Trong chế độ Preview macOS, chuyển thẳng sang Màn hình 1
-                    ui.set_privilege_error(SharedString::new());
-                    load_adapters();
-                    ui.set_current_screen(1);
-                }
-                Err(msg) => {
-                    ui.set_privilege_error(SharedString::from(msg));
-                }
-            }
-        });
+        ui.set_current_screen(1);
     }
 
     // Callback: Màn hình 1 — Quét lại danh sách NIC
@@ -469,6 +456,18 @@ fn main() -> Result<(), slint::PlatformError> {
         let _ = open_url(AUTHOR_WEBSITE_URL);
     });
 
+    // Callback: Mở tài liệu hướng dẫn sử dụng (PDF đặt cùng thư mục ứng dụng)
+    {
+        let ui_weak = ui.as_weak();
+        ui.on_open_user_guide(move || {
+            if let Some(guide_path) = find_user_guide_path() {
+                let _ = open_local_file(&guide_path);
+            } else if let Some(ui) = ui_weak.upgrade() {
+                ui.set_has_user_guide(false);
+            }
+        });
+    }
+
     ui.run()
 }
 
@@ -544,10 +543,25 @@ mod ui_snapshot_tests {
         static LOCK: Mutex<()> = Mutex::new(());
         let _guard = LOCK.lock().unwrap();
 
+        let scale: u32 = if std::env::var("DUMP_UI_PREVIEWS_HIDPI").is_ok() {
+            2
+        } else {
+            1
+        };
+        let is_doc_mode = std::env::var("DUMP_UI_PREVIEWS_PRODUCTION").is_ok();
+
         let width: u32 = 560;
         let height: u32 = 758;
         let sw_window = MinimalSoftwareWindow::new(RepaintBufferType::NewBuffer);
-        sw_window.set_size(WindowSize::Physical(PhysicalSize::new(width, height)));
+        if scale > 1 {
+            sw_window.dispatch_event(slint::platform::WindowEvent::ScaleFactorChanged {
+                scale_factor: scale as f32,
+            });
+        }
+        sw_window.set_size(WindowSize::Physical(PhysicalSize::new(
+            width * scale,
+            height * scale,
+        )));
 
         slint::platform::set_platform(Box::new(HeadlessPlatform {
             window: sw_window.clone(),
@@ -556,7 +570,8 @@ mod ui_snapshot_tests {
         .expect("set headless slint platform");
 
         let ui = AppWindow::new().expect("create AppWindow");
-        ui.set_is_preview_mode(true);
+        ui.set_is_preview_mode(!is_doc_mode);
+        ui.set_has_user_guide(true);
         ui.set_subnet(SharedString::from(DEFAULT_SUBNET));
         ui.set_dns_primary(SharedString::from(DEFAULT_DNS_PRIMARY));
         ui.set_dns_secondary(SharedString::from(DEFAULT_DNS_SECONDARY));
@@ -582,13 +597,14 @@ mod ui_snapshot_tests {
         let dir = Path::new(&out_dir);
         std::fs::create_dir_all(dir).unwrap();
 
-        // 1. Màn hình 0: Yêu cầu quyền Quản trị
-        ui.set_current_screen(0);
-        dump_frame(&sw_window, width, height, &dir.join("01_privilege.ppm"));
-
-        // 2. Màn hình 1: Chọn kết nối mạng
+        // 1. Màn hình 1: Chọn kết nối mạng
         ui.set_current_screen(1);
-        dump_frame(&sw_window, width, height, &dir.join("02_nic_select.ppm"));
+        dump_frame(
+            &sw_window,
+            width * scale,
+            height * scale,
+            &dir.join("01_nic_select.ppm"),
+        );
 
         // 3. Màn hình 2: Nhập IP (mặc định khóa Subnet/GW/DNS, Gateway tự sinh)
         ui.set_selected_adapter_name(SharedString::from("Ethernet"));
@@ -605,22 +621,38 @@ mod ui_snapshot_tests {
         ui.set_priority_pair_caption(SharedString::from("Áp dụng giữa: Ethernet và Wi-Fi"));
         ui.set_change_priority(false);
         ui.set_current_screen(2);
-        dump_frame(&sw_window, width, height, &dir.join("03_ip_config.ppm"));
+        dump_frame(
+            &sw_window,
+            width * scale,
+            height * scale,
+            &dir.join("03_ip_config.ppm"),
+        );
 
-        // 4. Màn hình 2: Mở khóa sửa Gateway + Bật accordion Thay đổi ưu tiên (chiều cao lớn hơn để thấy rõ full form)
-        let tall_h: u32 = 900;
-        sw_window.set_size(WindowSize::Physical(PhysicalSize::new(width, tall_h)));
-        ui.set_gateway_editable(true);
+        // 4. Màn hình 2: Bật accordion Thay đổi ưu tiên (chiều cao đủ lớn để thấy trọn 3 tùy chọn)
+        let tall_h: u32 = 968;
+        sw_window.set_size(WindowSize::Physical(PhysicalSize::new(
+            width * scale,
+            tall_h * scale,
+        )));
+        ui.set_gateway_editable(false);
         ui.set_change_priority(true);
         ui.set_priority_mode(0);
         // Kick animation start then advance past 180ms
         slint::platform::update_timers_and_animations();
         std::thread::sleep(std::time::Duration::from_millis(240));
         slint::platform::update_timers_and_animations();
-        dump_frame(&sw_window, width, tall_h, &dir.join("04_ip_accordion.ppm"));
+        dump_frame(
+            &sw_window,
+            width * scale,
+            tall_h * scale,
+            &dir.join("04_ip_accordion.ppm"),
+        );
 
         // 5. Màn hình 3: Hoàn tất
-        sw_window.set_size(WindowSize::Physical(PhysicalSize::new(width, height)));
+        sw_window.set_size(WindowSize::Physical(PhysicalSize::new(
+            width * scale,
+            height * scale,
+        )));
         ui.set_result_adapter(SharedString::from("Ethernet"));
         ui.set_result_ip(SharedString::from("10.0.58.120"));
         ui.set_result_subnet(SharedString::from("255.255.255.0"));
@@ -629,7 +661,12 @@ mod ui_snapshot_tests {
         ui.set_result_dns2(SharedString::from("10.0.29.5"));
         ui.set_result_priority(SharedString::from("Ưu tiên Wi-Fi hơn Ethernet"));
         ui.set_current_screen(3);
-        dump_frame(&sw_window, width, height, &dir.join("05_success.ppm"));
+        dump_frame(
+            &sw_window,
+            width * scale,
+            height * scale,
+            &dir.join("05_success.ppm"),
+        );
 
         // 6. Màn hình 1 (không có Ethernet — chỉ có Wi-Fi, không tự chọn)
         let wifi_only_backend = create_backend(&LaunchOptions {
@@ -657,8 +694,8 @@ mod ui_snapshot_tests {
         ui.set_current_screen(1);
         dump_frame(
             &sw_window,
-            width,
-            height,
+            width * scale,
+            height * scale,
             &dir.join("06_no_ethernet_wifi_only.ppm"),
         );
     }

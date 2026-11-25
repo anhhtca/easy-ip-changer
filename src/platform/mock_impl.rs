@@ -1,4 +1,3 @@
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 use crate::domain::{
@@ -8,7 +7,6 @@ use crate::domain::{
 use crate::platform::{LaunchOptions, SystemNetworkBackend};
 
 pub struct MockBackend {
-    elevated: AtomicBool,
     single_nic: bool,
     wifi_only: bool,
 }
@@ -16,7 +14,6 @@ pub struct MockBackend {
 impl MockBackend {
     pub fn new(opts: &LaunchOptions) -> Self {
         Self {
-            elevated: AtomicBool::new(!opts.preview_no_admin),
             single_nic: opts.preview_single_nic,
             wifi_only: opts.preview_wifi_only,
         }
@@ -25,12 +22,10 @@ impl MockBackend {
 
 impl SystemNetworkBackend for MockBackend {
     fn is_elevated(&self) -> bool {
-        self.elevated.load(Ordering::Relaxed)
+        true
     }
 
     fn relaunch_elevated(&self) -> Result<(), String> {
-        // Trên macOS Preview: mô phỏng việc bấm Yes trên hộp thoại UAC thành công.
-        self.elevated.store(true, Ordering::Relaxed);
         Ok(())
     }
 

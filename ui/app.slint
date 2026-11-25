@@ -4,7 +4,6 @@ import "./fonts/BeVietnamPro-SemiBold.ttf";
 import "./fonts/BeVietnamPro-Bold.ttf";
 
 import { Theme, NicItem } from "theme.slint";
-import { PrivilegeScreen } from "screens/privilege_screen.slint";
 import { NicSelectScreen } from "screens/nic_select_screen.slint";
 import { IpConfigScreen } from "screens/ip_config_screen.slint";
 import { SuccessScreen } from "screens/success_screen.slint";
@@ -153,12 +152,10 @@ export component AppWindow inherits Window {
     min-height: 678px;
     background: Theme.bg-canvas;
 
-    // 0 = Privilege, 1 = Select NIC, 2 = IP Config, 3 = Success
+    // 1 = Select NIC, 2 = IP Config, 3 = Success
     in-out property <int> current-screen: 1;
     in property <bool> is-preview-mode: false;
-
-    // Screen 0
-    in-out property <string> privilege-error: "";
+    in-out property <bool> has-user-guide: false;
 
     // Screen 1
     in-out property <[NicItem]> adapters: [];
@@ -207,7 +204,6 @@ export component AppWindow inherits Window {
     in-out property <string> result-priority: "";
 
     // Callbacks handled in Rust
-    callback request-elevation();
     callback refresh-adapters();
     callback proceed-to-ip-config();
     callback back-to-nic-select();
@@ -221,6 +217,7 @@ export component AppWindow inherits Window {
     callback edit-again();
     callback close-app();
     callback open-author-link();
+    callback open-user-guide();
 
     public function focus-octet(idx: int) {
         ip-screen.focus-octet(idx);
@@ -275,31 +272,82 @@ export component AppWindow inherits Window {
                         }
                     }
 
-                    if root.is-preview-mode: VerticalLayout {
-                        alignment: center;
-                        Rectangle {
-                            height: 22px;
-                            border-radius: Theme.radius-pill;
-                            background: Theme.header-bg-elevated;
-                            border-width: 1px;
-                            border-color: Theme.header-line;
+                    HorizontalLayout {
+                        spacing: 8px;
+                        alignment: end;
 
-                            HorizontalLayout {
-                                padding-left: 9px;
-                                padding-right: 9px;
-                                Text {
-                                    text: "Preview macOS";
-                                    color: Theme.header-muted;
-                                    font-size: 11px;
-                                    font-weight: 600;
-                                    vertical-alignment: center;
+                        if root.is-preview-mode: VerticalLayout {
+                            alignment: center;
+                            Rectangle {
+                                height: 24px;
+                                border-radius: Theme.radius-pill;
+                                background: Theme.header-bg-elevated;
+                                border-width: 1px;
+                                border-color: Theme.header-line;
+
+                                HorizontalLayout {
+                                    padding-left: 9px;
+                                    padding-right: 9px;
+                                    Text {
+                                        text: "Preview macOS";
+                                        color: Theme.header-muted;
+                                        font-size: 11px;
+                                        font-weight: 600;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                            }
+                        }
+
+                        if root.has-user-guide: VerticalLayout {
+                            alignment: center;
+                            Rectangle {
+                                height: 28px;
+                                border-radius: Theme.radius-sm;
+                                background: guide-hdr-ta.pressed ? Theme.accent-pressed
+                                    : guide-hdr-ta.has-hover ? #7D132D
+                                    : Theme.header-bg-elevated;
+                                border-width: 1px;
+                                border-color: guide-hdr-ta.has-hover ? #E99BB0 : Theme.header-line;
+
+                                animate background { duration: 140ms; easing: ease-out; }
+                                animate border-color { duration: 140ms; easing: ease-out; }
+
+                                HorizontalLayout {
+                                    padding-left: 10px;
+                                    padding-right: 10px;
+                                    spacing: 6px;
+                                    alignment: center;
+
+                                    VerticalLayout {
+                                        alignment: center;
+                                        Image {
+                                            source: @image-url("icons/book-open.svg");
+                                            width: 13px;
+                                            height: 13px;
+                                            colorize: Theme.header-text;
+                                        }
+                                    }
+
+                                    Text {
+                                        text: "Hướng dẫn";
+                                        color: Theme.header-text;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        vertical-alignment: center;
+                                    }
+                                }
+
+                                guide-hdr-ta := TouchArea {
+                                    mouse-cursor: pointer;
+                                    clicked => { root.open-user-guide(); }
                                 }
                             }
                         }
                     }
                 }
 
-                if root.current-screen > 0: HorizontalLayout {
+                HorizontalLayout {
                     spacing: 14px;
                     alignment: start;
 
@@ -341,22 +389,17 @@ export component AppWindow inherits Window {
             vertical-stretch: 1;
             background: Theme.bg-canvas;
 
-            if root.current-screen == 0: PrivilegeScreen {
-                width: parent.width;
-                height: parent.height;
-                error-message: root.privilege-error;
-                request-elevation => { root.request-elevation(); }
-            }
-
             if root.current-screen == 1: NicSelectScreen {
                 width: parent.width;
                 height: parent.height;
                 adapters: root.adapters;
                 selected-index <=> root.selected-nic-index;
                 has-ethernet: root.has-ethernet;
+                has-user-guide: root.has-user-guide;
                 scan-error: root.scan-error;
                 refresh-clicked => { root.refresh-adapters(); }
                 continue-clicked => { root.proceed-to-ip-config(); }
+                guide-clicked => { root.open-user-guide(); }
             }
 
             ip-screen := IpConfigScreen {

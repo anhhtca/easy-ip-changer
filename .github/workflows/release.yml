@@ -40,13 +40,16 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist | Out-Null
 
           $exeSource = "target/x86_64-pc-windows-msvc/release/easy-ip-changer.exe"
+          $guideSource = "docs/Huong-dan-su-dung.pdf"
           $exeDest = "dist/easy-ip-changer.exe"
+          $guideDest = "dist/Huong-dan-su-dung.pdf"
           $zipDest = "dist/easy-ip-changer-windows-x64.zip"
 
           Copy-Item -Path $exeSource -Destination $exeDest -Force
-          Compress-Archive -Path $exeDest -DestinationPath $zipDest -Force
+          Copy-Item -Path $guideSource -Destination $guideDest -Force
+          Compress-Archive -Path $exeDest, $guideDest -DestinationPath $zipDest -Force
 
-          $checksums = @($exeDest, $zipDest) | ForEach-Object {
+          $checksums = @($exeDest, $guideDest, $zipDest) | ForEach-Object {
             $hash = (Get-FileHash -Path $_ -Algorithm SHA256).Hash.ToLowerInvariant()
             $name = Split-Path -Leaf $_
             "$hash  $name"

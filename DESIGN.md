@@ -33,7 +33,7 @@
 
 - **App Icon (`assets/app.ico`, `assets/app-icon.png`):** Custom Windows 11 Fluent-style rounded tile in Deep Burgundy (`#6B0F26`) to Agribank Bordeaux (`#AE1C3F`) gradient featuring bold white `"IP"` lettering above Agribank Gold (`#FCD34D`) and Emerald Mint (`#34D399`) bidirectional swap arrows. Multi-resolution `.ico` (`16`, `24`, `32`, `48`, `64`, `128` px 32-bit BGRA DIB + `256` px PNG) embedded into the Windows `.exe` via `winresource`, paired with `assets/app-icon.png` for the Slint `Window` icon.
 - **Header Brand Mark (`ui/icons/agribank-logo.svg`):** Vector Agribank square emblem (`34×34px`) displayed on the Agribank Bordeaux (`#AE1C3F`) top header rail beside the application title.
-- **UI Icons:** Authored monochrome SVG icon set (`ui/icons/`, `24×24` viewBox, uniform `1.8–2.2px` round stroke) tinted dynamically via Slint `colorize`: `ethernet`, `wifi`, `shield`, `edit`, `lock`, `check`, `chevron-down`, `refresh`, `alert`, `arrow-left`, `arrow-right`. Zero emoji or Unicode symbol substitutes.
+- **UI Icons:** Authored monochrome SVG icon set (`ui/icons/`, `24×24` viewBox, uniform `1.8–2.2px` round stroke) tinted dynamically via Slint `colorize`: `ethernet`, `wifi`, `edit`, `lock`, `check`, `chevron-down`, `refresh`, `alert`, `arrow-left`, `arrow-right`. Zero emoji or Unicode symbol substitutes.
 
 ## Layout & Components
 
