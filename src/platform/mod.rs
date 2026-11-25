@@ -47,3 +47,32 @@ pub fn create_backend(_opts: &LaunchOptions) -> Box<dyn SystemNetworkBackend> {
 pub fn create_backend(opts: &LaunchOptions) -> Box<dyn SystemNetworkBackend> {
     Box::new(mock_impl::MockBackend::new(opts))
 }
+
+pub fn open_url(url: &str) -> Result<(), String> {
+    if !url.starts_with("https://") && !url.starts_with("http://") {
+        return Err("Liên kết không hợp lệ.".to_string());
+    }
+
+    #[cfg(windows)]
+    {
+        windows_impl::open_url(url)
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        std::process::Command::new("open")
+            .arg(url)
+            .spawn()
+            .map(|_| ())
+            .map_err(|e| format!("Không thể mở trình duyệt: {e}"))
+    }
+
+    #[cfg(all(not(windows), not(target_os = "macos")))]
+    {
+        std::process::Command::new("xdg-open")
+            .arg(url)
+            .spawn()
+            .map(|_| ())
+            .map_err(|e| format!("Không thể mở trình duyệt: {e}"))
+    }
+}

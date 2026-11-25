@@ -37,6 +37,6 @@
 
 ## Layout & Components
 
-- **Window dimensions:** `560 × 730 px` preferred (`520 × 650 px` minimum) so all 3 Step-2 sections (4-octet IP, locked Subnet/Gateway/DNS, and the `"Thay đổi ưu tiên Eth và Wifi"` checkbox) fit above the fold without scrolling, while expanding the accordion scrolls smoothly above an anchored `62px` footer.
+- **Window dimensions:** `560 × 758 px` preferred (`520 × 678 px` minimum) so all 3 Step-2 sections (4-octet IP, locked Subnet/Gateway/DNS, and the `"Thay đổi ưu tiên Eth và Wifi"` checkbox) fit above the fold without scrolling, while expanding the accordion scrolls smoothly above an anchored `62px` action footer and a persistent `28px` WinForms-style status bar footer (`Theme.bg-subtle`, `1px` top border).
 - **No nested cards:** Flat white surfaces (`10px` radius, `1px` `#E6DFE2` border) separated by spacing or `1px` hairline dividers (`#F2EEF0`).
 - **Motion:** Functional state transitions only (`140–180ms ease-out` on hover/focus/selection, smooth accordion height unfold and chevron rotation).

@@ -15,7 +15,9 @@ use crate::domain::{
     parse_pasted_ipv4, resolve_priority_pair, sanitize_octet_digits, sort_and_pick_default_nic,
     validate_ip_consistency, validate_ip_octets, validate_optional_ipv4, validate_subnet_mask,
 };
-use crate::platform::{LaunchOptions, SystemNetworkBackend, create_backend};
+use crate::platform::{LaunchOptions, SystemNetworkBackend, create_backend, open_url};
+
+const AUTHOR_WEBSITE_URL: &str = "https://anhht.me";
 
 slint::include_modules!();
 
@@ -462,6 +464,11 @@ fn main() -> Result<(), slint::PlatformError> {
         });
     }
 
+    // Callback: Thanh trạng thái (Footer) — Mở trang tác giả trên trình duyệt mặc định
+    ui.on_open_author_link(|| {
+        let _ = open_url(AUTHOR_WEBSITE_URL);
+    });
+
     ui.run()
 }
 
@@ -538,7 +545,7 @@ mod ui_snapshot_tests {
         let _guard = LOCK.lock().unwrap();
 
         let width: u32 = 560;
-        let height: u32 = 730;
+        let height: u32 = 758;
         let sw_window = MinimalSoftwareWindow::new(RepaintBufferType::NewBuffer);
         sw_window.set_size(WindowSize::Physical(PhysicalSize::new(width, height)));
 

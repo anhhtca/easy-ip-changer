@@ -224,6 +224,31 @@ impl SystemNetworkBackend for WindowsBackend {
     }
 }
 
+pub fn open_url(url: &str) -> Result<(), String> {
+    let wide_url: Vec<u16> = OsStr::new(url)
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+
+    let result = unsafe {
+        ShellExecuteW(
+            None,
+            w!("open"),
+            PCWSTR(wide_url.as_ptr()),
+            PCWSTR::null(),
+            PCWSTR::null(),
+            SW_SHOWNORMAL,
+        )
+    };
+
+    let code = result.0 as isize;
+    if code > 32 {
+        Ok(())
+    } else {
+        Err(format!("Không thể mở liên kết {url} (mã lỗi {code})."))
+    }
+}
+
 fn resolve_netsh_path() -> PathBuf {
     let sys_root = std::env::var("SystemRoot").unwrap_or_else(|_| r"C:\Windows".to_string());
     PathBuf::from(sys_root).join("System32").join("netsh.exe")
