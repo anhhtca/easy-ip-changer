@@ -1,0 +1,7 @@
+/target
+.DS_Store
+*.pdb
+.impeccable/questions/
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/config.local.json
