@@ -1,0 +1,569 @@
+import { Theme } from "../theme.slint";
+import { PrimaryButton, SecondaryButton } from "../components/buttons.slint";
+import { OctetInput } from "../components/octet_input.slint";
+import { LockableField, LockableDnsGroup } from "../components/lockable_field.slint";
+
+component PriorityOptionRow inherits Rectangle {
+    in property <string> title;
+    in property <string> subtitle;
+    in property <bool> is-default-badge: false;
+    in property <bool> selected: false;
+    in property <bool> enabled: true;
+    callback clicked();
+
+    border-radius: Theme.radius-sm;
+    border-width: root.selected ? 1.5px : 1px;
+    border-color: root.selected ? Theme.accent
+        : (ta.has-hover && root.enabled) ? Theme.border-strong
+        : Theme.border-subtle;
+    background: root.selected ? Theme.bg-selected
+        : (ta.has-hover && root.enabled) ? #F8FAFC
+        : Theme.bg-surface;
+
+    animate background { duration: 140ms; easing: ease-out; }
+    animate border-color { duration: 140ms; easing: ease-out; }
+
+    HorizontalLayout {
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 9px;
+        padding-bottom: 9px;
+        spacing: 10px;
+        alignment: start;
+
+        VerticalLayout {
+            alignment: center;
+            width: 18px;
+
+            Rectangle {
+                width: 16px;
+                height: 16px;
+                border-radius: 8px;
+                border-width: root.selected ? 5px : 1.5px;
+                border-color: root.selected ? Theme.accent : Theme.border-strong;
+                background: Theme.bg-surface;
+            }
+        }
+
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: 2px;
+
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: start;
+
+                Text {
+                    text: root.title;
+                    color: Theme.text-primary;
+                    font-size: 13px;
+                    font-weight: 600;
+                    vertical-alignment: center;
+                }
+
+                if root.is-default-badge: Rectangle {
+                    height: 18px;
+                    border-radius: Theme.radius-pill;
+                    background: Theme.success-bg;
+
+                    HorizontalLayout {
+                        padding-left: 7px;
+                        padding-right: 7px;
+                        Text {
+                            text: "Mặc định";
+                            color: Theme.success;
+                            font-size: 10.5px;
+                            font-weight: 700;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            Text {
+                text: root.subtitle;
+                color: Theme.text-muted;
+                font-size: 11.5px;
+                wrap: word-wrap;
+            }
+        }
+    }
+
+    ta := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component IpConfigScreen inherits VerticalLayout {
+    // Selected adapter context
+    in property <string> adapter-name;
+    in property <string> adapter-type-label;
+    in property <bool> adapter-is-ethernet: true;
+    in property <string> adapter-current-ip;
+
+    // IP octets
+    in-out property <string> ip1;
+    in-out property <string> ip2;
+    in-out property <string> ip3;
+    in-out property <string> ip4;
+    in property <bool> ip-has-error: false;
+
+    // Auto / lockable fields
+    in-out property <string> subnet;
+    in-out property <bool> subnet-editable: false;
+
+    in-out property <string> gateway;
+    in-out property <bool> gateway-editable: false;
+    in property <bool> gateway-auto-synced: true;
+
+    in-out property <string> dns-primary;
+    in-out property <string> dns-secondary;
+    in-out property <bool> dns-editable: false;
+
+    // Priority accordion
+    in property <bool> can-change-priority: true;
+    in property <string> priority-pair-caption;
+    in-out property <bool> change-priority: false;
+    in-out property <int> priority-mode: 0; // 0 = PreferWifi, 1 = PreferEthernet, 2 = WindowsDefault
+
+    // Submission state
+    in property <bool> saving: false;
+    in property <string> error-message: "";
+
+    callback back-clicked();
+    callback octet-edited(int, string);
+    callback toggle-subnet-edit();
+    callback toggle-gateway-edit();
+    callback gateway-manual-edited(string);
+    callback toggle-dns-edit();
+    callback toggle-change-priority();
+    callback save-clicked();
+
+    public function focus-octet(idx: int) {
+        ip-input.focus-slot(idx);
+    }
+
+    spacing: 0px;
+
+    // Compact selected-adapter bar (flat band, not a nested card)
+    Rectangle {
+        height: 42px;
+        background: Theme.bg-subtle;
+
+        HorizontalLayout {
+            padding-left: 24px;
+            padding-right: 24px;
+            alignment: space-between;
+            spacing: 10px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: start;
+
+                VerticalLayout {
+                    alignment: center;
+                    Image {
+                        source: root.adapter-is-ethernet
+                            ? @image-url("../icons/ethernet.svg")
+                            : @image-url("../icons/wifi.svg");
+                        width: 16px;
+                        height: 16px;
+                        colorize: Theme.accent;
+                    }
+                }
+
+                Text {
+                    text: root.adapter-name;
+                    color: Theme.text-primary;
+                    font-size: 13px;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: "(" + root.adapter-type-label + ")";
+                    color: Theme.text-secondary;
+                    font-size: 12px;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: "•  " + root.adapter-current-ip;
+                    color: Theme.text-muted;
+                    font-size: 12px;
+                    vertical-alignment: center;
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Rectangle {
+                    height: 26px;
+                    border-radius: Theme.radius-sm;
+                    background: change-ta.has-hover && !root.saving ? #DCE5F2 : transparent;
+
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        padding-right: 8px;
+                        Text {
+                            text: "Đổi mạng";
+                            color: root.saving ? Theme.text-muted : Theme.accent;
+                            font-size: 12px;
+                            font-weight: 600;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    change-ta := TouchArea {
+                        enabled: !root.saving;
+                        mouse-cursor: !root.saving ? pointer : default;
+                        clicked => { root.back-clicked(); }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            y: parent.height - 1px;
+            height: 1px;
+            width: parent.width;
+            background: Theme.border-subtle;
+        }
+    }
+
+    // Scrollable Form Body
+    Flickable {
+        vertical-stretch: 1;
+        content-height: form-body.preferred-height;
+        content-width: self.width;
+        interactive: true;
+
+        form-body := VerticalLayout {
+            width: parent.width;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 14px;
+            padding-bottom: 16px;
+            spacing: 10px;
+
+            // Section 1: IP Address (4 Segments)
+            Rectangle {
+                border-radius: Theme.radius-md;
+                background: Theme.bg-surface;
+                border-width: 1px;
+                border-color: root.ip-has-error ? Theme.danger : Theme.border-subtle;
+
+                VerticalLayout {
+                    padding: 14px;
+                    spacing: 8px;
+
+                    VerticalLayout {
+                        spacing: 2px;
+
+                        Text {
+                            text: "Địa chỉ IP mới";
+                            color: Theme.text-primary;
+                            font-size: 14.5px;
+                            font-weight: 700;
+                        }
+
+                        Text {
+                            text: "Nhập 4 nhóm số (0–255). Gõ dấu chấm (.) để chuyển ô nhanh hoặc dán nguyên địa chỉ IP.";
+                            color: Theme.text-muted;
+                            font-size: 11.5px;
+                            wrap: word-wrap;
+                        }
+                    }
+
+                    ip-input := OctetInput {
+                        o1 <=> root.ip1;
+                        o2 <=> root.ip2;
+                        o3 <=> root.ip3;
+                        o4 <=> root.ip4;
+                        has-error: root.ip-has-error;
+                        enabled: !root.saving;
+                        octet-edited(idx, val) => { root.octet-edited(idx, val); }
+                    }
+                }
+            }
+
+            // Section 2: Protected Network Defaults (Subnet, Gateway, DNS)
+            Rectangle {
+                border-radius: Theme.radius-md;
+                background: Theme.bg-surface;
+                border-width: 1px;
+                border-color: Theme.border-subtle;
+
+                VerticalLayout {
+                    padding: 14px;
+                    spacing: 10px;
+
+                    LockableField {
+                        label: "Subnet Mask";
+                        badge-note: root.subnet-editable ? "Đang chỉnh sửa" : "Mặc định";
+                        value <=> root.subnet;
+                        editable <=> root.subnet-editable;
+                        busy: root.saving;
+                        toggle-edit => { root.toggle-subnet-edit(); }
+                    }
+
+                    Rectangle {
+                        height: 1px;
+                        background: #EEF2F7;
+                    }
+
+                    LockableField {
+                        label: "Default Gateway";
+                        badge-note: root.gateway-editable ? "Đang chỉnh sửa"
+                            : root.gateway-auto-synced ? "Tự động theo IP (.1)"
+                            : "Đã tùy chỉnh";
+                        placeholder: "Tự điền khi nhập 3 nhóm IP đầu...";
+                        value <=> root.gateway;
+                        editable <=> root.gateway-editable;
+                        busy: root.saving;
+                        toggle-edit => { root.toggle-gateway-edit(); }
+                        edited(val) => { root.gateway-manual-edited(val); }
+                    }
+
+                    Rectangle {
+                        height: 1px;
+                        background: #EEF2F7;
+                    }
+
+                    LockableDnsGroup {
+                        dns-primary <=> root.dns-primary;
+                        dns-secondary <=> root.dns-secondary;
+                        editable <=> root.dns-editable;
+                        busy: root.saving;
+                        toggle-edit => { root.toggle-dns-edit(); }
+                    }
+                }
+            }
+
+            // Section 3: Priority Accordion ("Thay đổi ưu tiên Eth và Wifi")
+            Rectangle {
+                border-radius: Theme.radius-md;
+                background: Theme.bg-surface;
+                border-width: 1px;
+                border-color: root.change-priority ? Theme.border-strong : Theme.border-subtle;
+
+                VerticalLayout {
+                    spacing: 0px;
+
+                    // Checkbox Header Row
+                    Rectangle {
+                        height: 46px;
+                        border-radius: Theme.radius-md;
+                        background: (prio-ta.has-hover && root.can-change-priority && !root.saving)
+                            ? #F8FAFC : transparent;
+
+                        HorizontalLayout {
+                            padding-left: 14px;
+                            padding-right: 14px;
+                            spacing: 10px;
+                            alignment: space-between;
+
+                            HorizontalLayout {
+                                spacing: 10px;
+                                alignment: start;
+
+                                VerticalLayout {
+                                    alignment: center;
+
+                                    Rectangle {
+                                        width: 18px;
+                                        height: 18px;
+                                        border-radius: 4px;
+                                        border-width: 1.5px;
+                                        border-color: !root.can-change-priority ? #CBD5E1
+                                            : root.change-priority ? Theme.accent
+                                            : Theme.border-strong;
+                                        background: !root.can-change-priority ? Theme.bg-subtle
+                                            : root.change-priority ? Theme.accent
+                                            : Theme.bg-surface;
+
+                                        if root.change-priority: Image {
+                                            source: @image-url("../icons/check.svg");
+                                            width: 12px;
+                                            height: 12px;
+                                            colorize: #FFFFFF;
+                                            x: 3px;
+                                            y: 3px;
+                                        }
+                                    }
+                                }
+
+                                Text {
+                                    text: "Thay đổi ưu tiên Eth và Wifi";
+                                    color: root.can-change-priority ? Theme.text-primary : Theme.text-muted;
+                                    font-size: 13.5px;
+                                    font-weight: 600;
+                                    vertical-alignment: center;
+                                }
+                            }
+
+                            if root.can-change-priority: VerticalLayout {
+                                alignment: center;
+                                Image {
+                                    source: root.change-priority
+                                        ? @image-url("../icons/chevron-up.svg")
+                                        : @image-url("../icons/chevron-down.svg");
+                                    width: 16px;
+                                    height: 16px;
+                                    colorize: root.change-priority ? Theme.accent : Theme.text-muted;
+                                }
+                            }
+                        }
+
+                        prio-ta := TouchArea {
+                            enabled: root.can-change-priority && !root.saving;
+                            mouse-cursor: (root.can-change-priority && !root.saving) ? pointer : default;
+                            clicked => { root.toggle-change-priority(); }
+                        }
+                    }
+
+                    if !root.can-change-priority: VerticalLayout {
+                        padding-left: 44px;
+                        padding-right: 16px;
+                        padding-bottom: 12px;
+
+                        Text {
+                            text: "Máy cần có đồng thời cả Ethernet và Wi-Fi để thiết lập thứ tự ưu tiên.";
+                            color: Theme.text-muted;
+                            font-size: 11.5px;
+                            wrap: word-wrap;
+                        }
+                    }
+
+                    // Expandable Accordion Content
+                    Rectangle {
+                        clip: true;
+                        height: (root.can-change-priority && root.change-priority)
+                            ? accordion-inner.preferred-height
+                            : 0px;
+
+                        animate height { duration: 180ms; easing: ease-out; }
+
+                        accordion-inner := VerticalLayout {
+                            padding-left: 16px;
+                            padding-right: 16px;
+                            padding-bottom: 14px;
+                            spacing: 8px;
+
+                            Rectangle {
+                                height: 1px;
+                                background: #EEF2F7;
+                            }
+
+                            Text {
+                                text: root.priority-pair-caption;
+                                color: Theme.text-secondary;
+                                font-size: 12px;
+                                font-weight: 500;
+                            }
+
+                            PriorityOptionRow {
+                                title: "Ưu tiên Wi-Fi";
+                                subtitle: "Khi bật cả hai mạng, máy ưu tiên kết nối qua Wi-Fi";
+                                is-default-badge: true;
+                                selected: root.priority-mode == 0;
+                                enabled: !root.saving;
+                                clicked => { root.priority-mode = 0; }
+                            }
+
+                            PriorityOptionRow {
+                                title: "Ưu tiên Ethernet";
+                                subtitle: "Khi bật cả hai mạng, máy ưu tiên kết nối qua dây Ethernet";
+                                selected: root.priority-mode == 1;
+                                enabled: !root.saving;
+                                clicked => { root.priority-mode = 1; }
+                            }
+
+                            PriorityOptionRow {
+                                title: "Mặc định Windows";
+                                subtitle: "Khôi phục chế độ tự động chọn ưu tiên của Windows";
+                                selected: root.priority-mode == 2;
+                                enabled: !root.saving;
+                                clicked => { root.priority-mode = 2; }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Inline Error Banner
+            if root.error-message != "": Rectangle {
+                border-radius: Theme.radius-sm;
+                background: Theme.danger-bg;
+                border-width: 1px;
+                border-color: Theme.danger-border;
+
+                HorizontalLayout {
+                    padding: 12px;
+                    spacing: 10px;
+                    alignment: start;
+
+                    Image {
+                        source: @image-url("../icons/alert.svg");
+                        width: 18px;
+                        height: 18px;
+                        colorize: Theme.danger;
+                        vertical-alignment: top;
+                    }
+
+                    Text {
+                        text: root.error-message;
+                        color: Theme.danger;
+                        font-size: 12.5px;
+                        font-weight: 500;
+                        wrap: word-wrap;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+        }
+    }
+
+    // Anchored Footer
+    Rectangle {
+        height: 62px;
+        background: Theme.bg-surface;
+
+        Rectangle {
+            y: 0px;
+            height: 1px;
+            width: parent.width;
+            background: Theme.border-subtle;
+        }
+
+        HorizontalLayout {
+            padding-left: 24px;
+            padding-right: 24px;
+            alignment: space-between;
+
+            VerticalLayout {
+                alignment: center;
+                SecondaryButton {
+                    label: "Quay lại";
+                    enabled: !root.saving;
+                    has-leading-icon: true;
+                    leading-icon: @image-url("../icons/arrow-left.svg");
+                    clicked => { root.back-clicked(); }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                PrimaryButton {
+                    label: root.saving ? "Đang ghi..." : "Ghi";
+                    loading: root.saving;
+                    enabled: !root.saving;
+                    min-width: 136px;
+                    clicked => { root.save-clicked(); }
+                }
+            }
+        }
+    }
+}

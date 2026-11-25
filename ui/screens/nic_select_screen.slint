@@ -1,0 +1,355 @@
+import { Theme, NicItem } from "../theme.slint";
+import { PrimaryButton, SecondaryButton } from "../components/buttons.slint";
+
+component NicOptionRow inherits Rectangle {
+    in property <NicItem> item;
+    in property <bool> selected: false;
+    in property <bool> recommended: false;
+    callback clicked();
+
+    border-radius: Theme.radius-md;
+    border-width: root.selected ? 1.5px : 1px;
+    border-color: root.selected ? Theme.accent
+        : ta.has-hover ? Theme.border-strong
+        : Theme.border-subtle;
+    background: root.selected ? Theme.bg-selected
+        : ta.has-hover ? #F8FAFC
+        : Theme.bg-surface;
+
+    animate background { duration: 150ms; easing: ease-out; }
+    animate border-color { duration: 150ms; easing: ease-out; }
+
+    HorizontalLayout {
+        padding: 14px;
+        spacing: 12px;
+        alignment: start;
+
+        // Radio indicator
+        VerticalLayout {
+            alignment: center;
+            width: 20px;
+
+            Rectangle {
+                width: 18px;
+                height: 18px;
+                border-radius: 9px;
+                border-width: root.selected ? 5px : 1.5px;
+                border-color: root.selected ? Theme.accent : Theme.border-strong;
+                background: Theme.bg-surface;
+            }
+        }
+
+        // Icon badge
+        VerticalLayout {
+            alignment: center;
+
+            Rectangle {
+                width: 40px;
+                height: 40px;
+                border-radius: Theme.radius-sm;
+                background: root.selected ? #DBEAFE
+                    : root.item.is-ethernet ? #EEF4FC
+                    : Theme.bg-subtle;
+
+                Image {
+                    source: root.item.is-ethernet
+                        ? @image-url("../icons/ethernet.svg")
+                        : @image-url("../icons/wifi.svg");
+                    width: 20px;
+                    height: 20px;
+                    colorize: root.selected ? Theme.accent
+                        : root.item.is-ethernet ? #1E40AF
+                        : Theme.text-secondary;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                }
+            }
+        }
+
+        // Info column
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: 4px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: start;
+
+                Text {
+                    text: root.item.friendly-name;
+                    color: Theme.text-primary;
+                    font-size: 14.5px;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                }
+
+                Rectangle {
+                    height: 20px;
+                    border-radius: Theme.radius-pill;
+                    background: Theme.bg-subtle;
+
+                    HorizontalLayout {
+                        padding-left: 7px;
+                        padding-right: 7px;
+                        Text {
+                            text: root.item.type-label;
+                            color: Theme.text-secondary;
+                            font-size: 11px;
+                            font-weight: 600;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                if root.recommended: Rectangle {
+                    height: 21px;
+                    border-radius: Theme.radius-pill;
+                    background: Theme.success-bg;
+                    border-width: 1px;
+                    border-color: Theme.success-border;
+
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        padding-right: 8px;
+                        Text {
+                            text: "Nên chọn";
+                            color: Theme.success;
+                            font-size: 11px;
+                            font-weight: 700;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            Text {
+                text: root.item.description;
+                color: Theme.text-secondary;
+                font-size: 12px;
+                overflow: elide;
+            }
+
+            HorizontalLayout {
+                spacing: 10px;
+                alignment: start;
+                padding-top: 2px;
+
+                HorizontalLayout {
+                    spacing: 5px;
+                    alignment: start;
+
+                    VerticalLayout {
+                        alignment: center;
+                        Rectangle {
+                            width: 7px;
+                            height: 7px;
+                            border-radius: 3.5px;
+                            background: root.item.is-connected ? Theme.success-dot : #94A3B8;
+                        }
+                    }
+
+                    Text {
+                        text: root.item.status-text;
+                        color: root.item.is-connected ? Theme.success : Theme.text-muted;
+                        font-size: 11.5px;
+                        font-weight: 600;
+                        vertical-alignment: center;
+                    }
+                }
+
+                Text {
+                    text: "•";
+                    color: #CBD5E1;
+                    font-size: 11.5px;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: root.item.ip-summary;
+                    color: Theme.text-muted;
+                    font-size: 11.5px;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component NicSelectScreen inherits VerticalLayout {
+    in property <[NicItem]> adapters;
+    in-out property <int> selected-index: 0;
+    in property <string> scan-error: "";
+
+    callback refresh-clicked();
+    callback continue-clicked();
+
+    spacing: 0px;
+
+    // Main content
+    VerticalLayout {
+        vertical-stretch: 1;
+        padding-left: 24px;
+        padding-right: 24px;
+        padding-top: 20px;
+        padding-bottom: 14px;
+        spacing: 14px;
+
+        // Title + Refresh
+        HorizontalLayout {
+            alignment: space-between;
+            spacing: 12px;
+
+            VerticalLayout {
+                horizontal-stretch: 1;
+                spacing: 4px;
+
+                Text {
+                    text: "Chọn kết nối mạng cần đổi IP";
+                    color: Theme.text-primary;
+                    font-size: 18px;
+                    font-weight: 700;
+                }
+
+                Text {
+                    text: "Ưu tiên chọn kết nối dây Ethernet (kể cả USB Ethernet) nếu máy đang cắm cáp mạng.";
+                    color: Theme.text-secondary;
+                    font-size: 12.5px;
+                    wrap: word-wrap;
+                }
+            }
+
+            VerticalLayout {
+                alignment: start;
+                SecondaryButton {
+                    label: "Quét lại";
+                    height: 34px;
+                    min-width: 96px;
+                    has-leading-icon: true;
+                    leading-icon: @image-url("../icons/refresh.svg");
+                    clicked => { root.refresh-clicked(); }
+                }
+            }
+        }
+
+        if root.scan-error != "": Rectangle {
+            border-radius: Theme.radius-sm;
+            background: Theme.danger-bg;
+            border-width: 1px;
+            border-color: Theme.danger-border;
+
+            HorizontalLayout {
+                padding: 12px;
+                spacing: 8px;
+
+                Image {
+                    source: @image-url("../icons/alert.svg");
+                    width: 16px;
+                    height: 16px;
+                    colorize: Theme.danger;
+                }
+
+                Text {
+                    text: root.scan-error;
+                    color: Theme.danger;
+                    font-size: 12.5px;
+                    wrap: word-wrap;
+                    horizontal-stretch: 1;
+                }
+            }
+        }
+
+        if root.adapters.length == 0: Rectangle {
+            vertical-stretch: 1;
+            border-radius: Theme.radius-md;
+            background: Theme.bg-surface;
+            border-width: 1px;
+            border-color: Theme.border-subtle;
+
+            VerticalLayout {
+                alignment: center;
+                padding: 28px;
+                spacing: 8px;
+
+                Text {
+                    text: "Không tìm thấy kết nối Ethernet hoặc Wi-Fi";
+                    color: Theme.text-primary;
+                    font-size: 15px;
+                    font-weight: 600;
+                    horizontal-alignment: center;
+                }
+
+                Text {
+                    text: "Hãy kiểm tra dây mạng, đầu chuyển USB Ethernet hoặc bật Wi-Fi trên máy, sau đó bấm \"Quét lại\".";
+                    color: Theme.text-secondary;
+                    font-size: 12.5px;
+                    horizontal-alignment: center;
+                    wrap: word-wrap;
+                }
+            }
+        }
+
+        if root.adapters.length > 0: Flickable {
+            vertical-stretch: 1;
+            content-height: list-box.preferred-height;
+            content-width: self.width;
+            interactive: true;
+
+            list-box := VerticalLayout {
+                width: parent.width;
+                spacing: 10px;
+                padding-bottom: 6px;
+
+                for adapter[idx] in root.adapters: NicOptionRow {
+                    item: adapter;
+                    selected: idx == root.selected-index;
+                    recommended: adapter.is-ethernet && (adapter.is-connected || idx == 0);
+                    clicked => { root.selected-index = idx; }
+                }
+            }
+        }
+    }
+
+    // Anchored Footer
+    Rectangle {
+        height: 62px;
+        background: Theme.bg-surface;
+
+        Rectangle {
+            y: 0px;
+            height: 1px;
+            width: parent.width;
+            background: Theme.border-subtle;
+        }
+
+        HorizontalLayout {
+            padding-left: 24px;
+            padding-right: 24px;
+            alignment: space-between;
+
+            Text {
+                text: root.adapters.length > 0
+                    ? "Đã tìm thấy " + root.adapters.length + " kết nối vật lý"
+                    : "Chưa chọn kết nối";
+                color: Theme.text-muted;
+                font-size: 12.5px;
+                vertical-alignment: center;
+            }
+
+            VerticalLayout {
+                alignment: center;
+                PrimaryButton {
+                    label: "Tiếp tục";
+                    enabled: root.adapters.length > 0 && root.selected-index >= 0;
+                    has-trailing-icon: true;
+                    trailing-icon: @image-url("../icons/arrow-right.svg");
+                    clicked => { root.continue-clicked(); }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,150 @@
+import { Theme } from "../theme.slint";
+
+export component PrimaryButton inherits Rectangle {
+    in property <string> label;
+    in property <bool> enabled: true;
+    in property <bool> loading: false;
+    in property <image> trailing-icon;
+    in property <bool> has-trailing-icon: false;
+    callback clicked();
+
+    height: 42px;
+    min-width: 128px;
+    border-radius: Theme.radius-sm;
+    background: !root.enabled || root.loading ? #93B4E8
+        : ta.pressed ? Theme.accent-pressed
+        : ta.has-hover ? Theme.accent-hover
+        : Theme.accent;
+
+    animate background { duration: 150ms; easing: ease-out; }
+
+    HorizontalLayout {
+        padding-left: 18px;
+        padding-right: 18px;
+        spacing: 8px;
+        alignment: center;
+
+        Text {
+            text: root.label;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 600;
+            vertical-alignment: center;
+        }
+
+        if root.has-trailing-icon && !root.loading: VerticalLayout {
+            alignment: center;
+            Image {
+                source: root.trailing-icon;
+                width: 16px;
+                height: 16px;
+                colorize: #FFFFFF;
+            }
+        }
+    }
+
+    ta := TouchArea {
+        enabled: root.enabled && !root.loading;
+        mouse-cursor: root.enabled && !root.loading ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component SecondaryButton inherits Rectangle {
+    in property <string> label;
+    in property <bool> enabled: true;
+    in property <image> leading-icon;
+    in property <bool> has-leading-icon: false;
+    callback clicked();
+
+    height: 42px;
+    min-width: 104px;
+    border-radius: Theme.radius-sm;
+    border-width: 1px;
+    border-color: ta.has-hover && root.enabled ? Theme.border-strong : Theme.border-subtle;
+    background: !root.enabled ? Theme.bg-subtle
+        : ta.pressed ? #E2E8F0
+        : ta.has-hover ? #F1F5F9
+        : Theme.bg-surface;
+
+    animate background { duration: 150ms; easing: ease-out; }
+
+    HorizontalLayout {
+        padding-left: 14px;
+        padding-right: 16px;
+        spacing: 6px;
+        alignment: center;
+
+        if root.has-leading-icon: VerticalLayout {
+            alignment: center;
+            Image {
+                source: root.leading-icon;
+                width: 15px;
+                height: 15px;
+                colorize: root.enabled ? Theme.text-secondary : Theme.text-muted;
+            }
+        }
+
+        Text {
+            text: root.label;
+            color: root.enabled ? Theme.text-primary : Theme.text-muted;
+            font-size: 13.5px;
+            font-weight: 500;
+            vertical-alignment: center;
+        }
+    }
+
+    ta := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component SmallEditButton inherits Rectangle {
+    in property <bool> editing: false;
+    in property <bool> enabled: true;
+    callback clicked();
+
+    height: 26px;
+    border-radius: Theme.radius-sm;
+    border-width: 1px;
+    border-color: root.editing ? Theme.accent : (ta.has-hover ? Theme.border-strong : Theme.border-subtle);
+    background: root.editing ? Theme.bg-selected
+        : ta.pressed ? #E2E8F0
+        : ta.has-hover ? #F1F5F9
+        : Theme.bg-surface;
+
+    animate background { duration: 150ms; easing: ease-out; }
+
+    HorizontalLayout {
+        padding-left: 8px;
+        padding-right: 9px;
+        spacing: 4px;
+        alignment: center;
+
+        VerticalLayout {
+            alignment: center;
+            Image {
+                source: root.editing ? @image-url("../icons/lock.svg") : @image-url("../icons/edit.svg");
+                width: 12px;
+                height: 12px;
+                colorize: root.editing ? Theme.accent : Theme.text-secondary;
+            }
+        }
+
+        Text {
+            text: root.editing ? "Khóa" : "Sửa";
+            color: root.editing ? Theme.accent : Theme.text-secondary;
+            font-size: 12px;
+            font-weight: 600;
+            vertical-alignment: center;
+        }
+    }
+
+    ta := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}

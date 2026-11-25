@@ -1,0 +1,314 @@
+import "./fonts/BeVietnamPro-Regular.ttf";
+import "./fonts/BeVietnamPro-Medium.ttf";
+import "./fonts/BeVietnamPro-SemiBold.ttf";
+import "./fonts/BeVietnamPro-Bold.ttf";
+
+import { Theme, NicItem } from "theme.slint";
+import { PrivilegeScreen } from "screens/privilege_screen.slint";
+import { NicSelectScreen } from "screens/nic_select_screen.slint";
+import { IpConfigScreen } from "screens/ip_config_screen.slint";
+import { SuccessScreen } from "screens/success_screen.slint";
+
+export { NicItem }
+
+component StepBadge inherits HorizontalLayout {
+    in property <string> num;
+    in property <string> title;
+    in property <bool> active: false;
+    in property <bool> done: false;
+
+    spacing: 7px;
+    alignment: start;
+
+    VerticalLayout {
+        alignment: center;
+        Rectangle {
+            width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            background: root.done ? Theme.success-dot
+                : root.active ? Theme.header-step-active
+                : Theme.header-bg-elevated;
+            border-width: (root.active || root.done) ? 0px : 1px;
+            border-color: #355885;
+
+            if root.done: Image {
+                source: @image-url("icons/check.svg");
+                width: 12px;
+                height: 12px;
+                colorize: #FFFFFF;
+                x: 5px;
+                y: 5px;
+            }
+
+            if !root.done: Text {
+                text: root.num;
+                color: root.active ? #0B1F38 : Theme.header-muted;
+                font-size: 11.5px;
+                font-weight: 700;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    Text {
+        text: root.title;
+        color: (root.active || root.done) ? Theme.header-text : Theme.header-muted;
+        font-size: 12.5px;
+        font-weight: root.active ? 600 : 500;
+        vertical-alignment: center;
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "Easy IP Changer — Đổi nhanh địa chỉ IP";
+    default-font-family: Theme.font-sans;
+    preferred-width: 560px;
+    preferred-height: 730px;
+    min-width: 520px;
+    min-height: 650px;
+    background: Theme.bg-canvas;
+
+    // 0 = Privilege, 1 = Select NIC, 2 = IP Config, 3 = Success
+    in-out property <int> current-screen: 1;
+    in property <bool> is-preview-mode: false;
+
+    // Screen 0
+    in-out property <string> privilege-error: "";
+
+    // Screen 1
+    in-out property <[NicItem]> adapters: [];
+    in-out property <int> selected-nic-index: 0;
+    in-out property <string> scan-error: "";
+
+    // Screen 2
+    in-out property <string> selected-adapter-name: "";
+    in-out property <string> selected-adapter-type: "";
+    in-out property <bool> selected-adapter-is-eth: true;
+    in-out property <string> selected-adapter-current-ip: "";
+
+    in-out property <string> ip1: "";
+    in-out property <string> ip2: "";
+    in-out property <string> ip3: "";
+    in-out property <string> ip4: "";
+    in-out property <bool> ip-has-error: false;
+
+    in-out property <string> subnet: "255.255.255.0";
+    in-out property <bool> subnet-editable: false;
+
+    in-out property <string> gateway: "";
+    in-out property <bool> gateway-editable: false;
+    in-out property <bool> gateway-auto-synced: true;
+
+    in-out property <string> dns-primary: "10.0.58.11";
+    in-out property <string> dns-secondary: "10.0.29.5";
+    in-out property <bool> dns-editable: false;
+
+    in-out property <bool> can-change-priority: true;
+    in-out property <string> priority-pair-caption: "";
+    in-out property <bool> change-priority: false;
+    in-out property <int> priority-mode: 0;
+
+    in-out property <bool> saving: false;
+    in-out property <string> form-error: "";
+
+    // Screen 3 (Success summary)
+    in-out property <string> result-adapter: "";
+    in-out property <string> result-ip: "";
+    in-out property <string> result-subnet: "";
+    in-out property <string> result-gateway: "";
+    in-out property <string> result-dns1: "";
+    in-out property <string> result-dns2: "";
+    in-out property <string> result-priority: "";
+
+    // Callbacks handled in Rust
+    callback request-elevation();
+    callback refresh-adapters();
+    callback proceed-to-ip-config();
+    callback back-to-nic-select();
+    callback octet-edited(int, string);
+    callback toggle-subnet-edit();
+    callback toggle-gateway-edit();
+    callback gateway-manual-edited(string);
+    callback toggle-dns-edit();
+    callback toggle-change-priority();
+    callback save-config();
+    callback edit-again();
+    callback close-app();
+
+    public function focus-octet(idx: int) {
+        ip-screen.focus-octet(idx);
+    }
+
+    VerticalLayout {
+        spacing: 0px;
+
+        // Committed Navy Top Rail + Stepper
+        Rectangle {
+            background: Theme.header-bg;
+
+            VerticalLayout {
+                padding-left: 24px;
+                padding-right: 24px;
+                padding-top: 13px;
+                padding-bottom: 13px;
+                spacing: 10px;
+
+                HorizontalLayout {
+                    alignment: space-between;
+
+                    VerticalLayout {
+                        spacing: 2px;
+
+                        Text {
+                            text: "Easy IP Changer";
+                            color: Theme.header-text;
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
+
+                        Text {
+                            text: "Đổi nhanh địa chỉ IP cho Windows 10/11 Pro";
+                            color: Theme.header-muted;
+                            font-size: 12px;
+                        }
+                    }
+
+                    if root.is-preview-mode: VerticalLayout {
+                        alignment: center;
+                        Rectangle {
+                            height: 22px;
+                            border-radius: Theme.radius-pill;
+                            background: Theme.header-bg-elevated;
+                            border-width: 1px;
+                            border-color: #2E5280;
+
+                            HorizontalLayout {
+                                padding-left: 9px;
+                                padding-right: 9px;
+                                Text {
+                                    text: "Preview macOS";
+                                    color: #93C5FD;
+                                    font-size: 11px;
+                                    font-weight: 600;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if root.current-screen > 0: HorizontalLayout {
+                    spacing: 14px;
+                    alignment: start;
+
+                    StepBadge {
+                        num: "1";
+                        title: "Chọn kết nối mạng";
+                        active: root.current-screen == 1;
+                        done: root.current-screen > 1;
+                    }
+
+                    VerticalLayout {
+                        alignment: center;
+                        Rectangle {
+                            width: 24px;
+                            height: 1.5px;
+                            background: root.current-screen > 1 ? Theme.success-dot : #2C4D77;
+                        }
+                    }
+
+                    StepBadge {
+                        num: "2";
+                        title: "Nhập địa chỉ IP";
+                        active: root.current-screen == 2;
+                        done: root.current-screen > 2;
+                    }
+                }
+            }
+
+            Rectangle {
+                y: parent.height - 1px;
+                height: 1px;
+                width: parent.width;
+                background: Theme.header-border;
+            }
+        }
+
+        // Active Screen Container
+        Rectangle {
+            vertical-stretch: 1;
+            background: Theme.bg-canvas;
+
+            if root.current-screen == 0: PrivilegeScreen {
+                width: parent.width;
+                height: parent.height;
+                error-message: root.privilege-error;
+                request-elevation => { root.request-elevation(); }
+            }
+
+            if root.current-screen == 1: NicSelectScreen {
+                width: parent.width;
+                height: parent.height;
+                adapters: root.adapters;
+                selected-index <=> root.selected-nic-index;
+                scan-error: root.scan-error;
+                refresh-clicked => { root.refresh-adapters(); }
+                continue-clicked => { root.proceed-to-ip-config(); }
+            }
+
+            ip-screen := IpConfigScreen {
+                visible: root.current-screen == 2;
+                width: parent.width;
+                height: parent.height;
+                adapter-name: root.selected-adapter-name;
+                adapter-type-label: root.selected-adapter-type;
+                adapter-is-ethernet: root.selected-adapter-is-eth;
+                adapter-current-ip: root.selected-adapter-current-ip;
+                ip1 <=> root.ip1;
+                ip2 <=> root.ip2;
+                ip3 <=> root.ip3;
+                ip4 <=> root.ip4;
+                ip-has-error: root.ip-has-error;
+                subnet <=> root.subnet;
+                subnet-editable <=> root.subnet-editable;
+                gateway <=> root.gateway;
+                gateway-editable <=> root.gateway-editable;
+                gateway-auto-synced: root.gateway-auto-synced;
+                dns-primary <=> root.dns-primary;
+                dns-secondary <=> root.dns-secondary;
+                dns-editable <=> root.dns-editable;
+                can-change-priority: root.can-change-priority;
+                priority-pair-caption: root.priority-pair-caption;
+                change-priority <=> root.change-priority;
+                priority-mode <=> root.priority-mode;
+                saving: root.saving;
+                error-message: root.form-error;
+                back-clicked => { root.back-to-nic-select(); }
+                octet-edited(idx, val) => { root.octet-edited(idx, val); }
+                toggle-subnet-edit => { root.toggle-subnet-edit(); }
+                toggle-gateway-edit => { root.toggle-gateway-edit(); }
+                gateway-manual-edited(val) => { root.gateway-manual-edited(val); }
+                toggle-dns-edit => { root.toggle-dns-edit(); }
+                toggle-change-priority => { root.toggle-change-priority(); }
+                save-clicked => { root.save-config(); }
+            }
+
+            if root.current-screen == 3: SuccessScreen {
+                width: parent.width;
+                height: parent.height;
+                adapter-name: root.result-adapter;
+                ip: root.result-ip;
+                subnet: root.result-subnet;
+                gateway: root.result-gateway;
+                dns-primary: root.result-dns1;
+                dns-secondary: root.result-dns2;
+                priority-summary: root.result-priority;
+                is-preview: root.is-preview-mode;
+                edit-again-clicked => { root.edit-again(); }
+                close-clicked => { root.close-app(); }
+            }
+        }
+    }
+}

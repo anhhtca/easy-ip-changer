@@ -1,0 +1,66 @@
+export struct NicItem {
+    if-index: int,
+    friendly-name: string,
+    description: string,
+    type-label: string,
+    is-ethernet: bool,
+    is-connected: bool,
+    status-text: string,
+    ip-summary: string,
+}
+
+export global Theme {
+    // Typography
+    out property <string> font-sans: "Be Vietnam Pro";
+
+    // Shell & Surfaces (Committed Navy Header + Crisp Alabaster Ground)
+    out property <color> header-bg: #0F2744;
+    out property <color> header-bg-elevated: #18365A;
+    out property <color> header-border: #1F416B;
+    out property <color> header-text: #FFFFFF;
+    out property <color> header-muted: #A9C5E8;
+    out property <color> header-step-active: #60A5FA;
+
+    out property <color> bg-canvas: #F4F6F9;
+    out property <color> bg-surface: #FFFFFF;
+    out property <color> bg-subtle: #EEF2F7;
+    out property <color> bg-readonly: #F7F9FC;
+    out property <color> bg-selected: #EFF6FF;
+
+    // Borders
+    out property <color> border-subtle: #DCE3EC;
+    out property <color> border-strong: #C2CDDC;
+    out property <color> border-focus: #1565D8;
+
+    // Text Hierarchy
+    out property <color> text-primary: #0F172A;
+    out property <color> text-secondary: #475569;
+    out property <color> text-muted: #64748B;
+    out property <color> text-readonly: #334155;
+
+    // Primary Accent (Cobalt)
+    out property <color> accent: #1565D8;
+    out property <color> accent-hover: #0F53B8;
+    out property <color> accent-pressed: #0B4194;
+    out property <color> accent-soft: #DBEAFE;
+
+    // Semantic States
+    out property <color> success: #0D7A5F;
+    out property <color> success-bg: #E6F6F0;
+    out property <color> success-border: #A7DFCA;
+    out property <color> success-dot: #10B981;
+
+    out property <color> warning: #B45309;
+    out property <color> warning-bg: #FEF3C7;
+    out property <color> warning-border: #FCD34D;
+
+    out property <color> danger: #B91C1C;
+    out property <color> danger-bg: #FEF2F2;
+    out property <color> danger-border: #FCA5A5;
+
+    // Radii & Spacing
+    out property <length> radius-sm: 6px;
+    out property <length> radius-md: 10px;
+    out property <length> radius-lg: 12px;
+    out property <length> radius-pill: 999px;
+}

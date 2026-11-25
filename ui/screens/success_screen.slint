@@ -1,0 +1,166 @@
+import { Theme } from "../theme.slint";
+import { PrimaryButton, SecondaryButton } from "../components/buttons.slint";
+
+component SummaryRow inherits HorizontalLayout {
+    in property <string> label;
+    in property <string> value;
+
+    padding-top: 9px;
+    padding-bottom: 9px;
+    alignment: space-between;
+    spacing: 12px;
+
+    Text {
+        text: root.label;
+        color: Theme.text-secondary;
+        font-size: 13px;
+        font-weight: 500;
+        vertical-alignment: center;
+    }
+
+    Text {
+        text: root.value;
+        color: Theme.text-primary;
+        font-size: 13.5px;
+        font-weight: 700;
+        vertical-alignment: center;
+        horizontal-alignment: right;
+    }
+}
+
+export component SuccessScreen inherits VerticalLayout {
+    in property <string> adapter-name;
+    in property <string> ip;
+    in property <string> subnet;
+    in property <string> gateway;
+    in property <string> dns-primary;
+    in property <string> dns-secondary;
+    in property <string> priority-summary;
+    in property <bool> is-preview: false;
+
+    callback edit-again-clicked();
+    callback close-clicked();
+
+    spacing: 0px;
+
+    VerticalLayout {
+        vertical-stretch: 1;
+        padding: 24px;
+        spacing: 18px;
+        alignment: center;
+
+        VerticalLayout {
+            spacing: 10px;
+            alignment: center;
+
+            HorizontalLayout {
+                alignment: center;
+                Rectangle {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 30px;
+                    background: Theme.success-bg;
+                    border-width: 1px;
+                    border-color: Theme.success-border;
+
+                    Image {
+                        source: @image-url("../icons/check.svg");
+                        width: 28px;
+                        height: 28px;
+                        colorize: Theme.success;
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                    }
+                }
+            }
+
+            Text {
+                text: "Đã ghi cấu hình IP thành công!";
+                color: Theme.text-primary;
+                font-size: 19px;
+                font-weight: 700;
+                horizontal-alignment: center;
+            }
+
+            Text {
+                text: root.is-preview
+                    ? "Đang chạy chế độ xem trước trên macOS (không ghi vào hệ thống)."
+                    : "Địa chỉ IP và các thông số mạng mới đã được áp dụng ngay trên máy.";
+                color: Theme.text-secondary;
+                font-size: 12.5px;
+                horizontal-alignment: center;
+                wrap: word-wrap;
+            }
+        }
+
+        Rectangle {
+            border-radius: Theme.radius-md;
+            background: Theme.bg-surface;
+            border-width: 1px;
+            border-color: Theme.border-subtle;
+
+            VerticalLayout {
+                padding-left: 18px;
+                padding-right: 18px;
+                padding-top: 6px;
+                padding-bottom: 6px;
+
+                SummaryRow { label: "Kết nối mạng"; value: root.adapter-name; }
+                Rectangle { height: 1px; background: #EEF2F7; }
+                SummaryRow { label: "Địa chỉ IP"; value: root.ip; }
+                Rectangle { height: 1px; background: #EEF2F7; }
+                SummaryRow { label: "Subnet Mask"; value: root.subnet; }
+                Rectangle { height: 1px; background: #EEF2F7; }
+                SummaryRow { label: "Default Gateway"; value: root.gateway; }
+                Rectangle { height: 1px; background: #EEF2F7; }
+                SummaryRow { label: "DNS chính"; value: root.dns-primary; }
+                Rectangle { height: 1px; background: #EEF2F7; }
+                SummaryRow { label: "DNS phụ"; value: root.dns-secondary; }
+
+                if root.priority-summary != "": Rectangle {
+                    height: 1px;
+                    background: #EEF2F7;
+                }
+                if root.priority-summary != "": SummaryRow {
+                    label: "Thứ tự ưu tiên";
+                    value: root.priority-summary;
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        height: 62px;
+        background: Theme.bg-surface;
+
+        Rectangle {
+            y: 0px;
+            height: 1px;
+            width: parent.width;
+            background: Theme.border-subtle;
+        }
+
+        HorizontalLayout {
+            padding-left: 24px;
+            padding-right: 24px;
+            alignment: space-between;
+
+            VerticalLayout {
+                alignment: center;
+                SecondaryButton {
+                    label: "Cấu hình lại";
+                    clicked => { root.edit-again-clicked(); }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                PrimaryButton {
+                    label: "Đóng ứng dụng";
+                    min-width: 148px;
+                    clicked => { root.close-clicked(); }
+                }
+            }
+        }
+    }
+}

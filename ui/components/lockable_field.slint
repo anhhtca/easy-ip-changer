@@ -1,0 +1,253 @@
+import { Theme } from "../theme.slint";
+import { SmallEditButton } from "buttons.slint";
+
+export component LockableField inherits VerticalLayout {
+    in property <string> label;
+    in property <string> badge-note: "";
+    in property <string> placeholder: "";
+    in-out property <string> value;
+    in-out property <bool> editable: false;
+    in property <bool> busy: false;
+    callback toggle-edit();
+    callback edited(string);
+
+    spacing: 5px;
+
+    HorizontalLayout {
+        alignment: space-between;
+        spacing: 8px;
+
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: start;
+
+            Text {
+                text: root.label;
+                color: Theme.text-primary;
+                font-size: 13px;
+                font-weight: 600;
+                vertical-alignment: center;
+            }
+
+            if root.badge-note != "": VerticalLayout {
+                alignment: center;
+                Rectangle {
+                    height: 20px;
+                    border-radius: Theme.radius-pill;
+                    background: Theme.bg-subtle;
+
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        padding-right: 8px;
+                        Text {
+                            text: root.badge-note;
+                            color: Theme.text-muted;
+                            font-size: 11px;
+                            font-weight: 500;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            alignment: center;
+            SmallEditButton {
+                editing: root.editable;
+                enabled: !root.busy;
+                clicked => {
+                    root.toggle-edit();
+                    if root.editable {
+                        input.focus();
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        height: 35px;
+        border-radius: Theme.radius-sm;
+        border-width: (root.editable && input.has-focus) ? 1.5px : 1px;
+        border-color: (root.editable && input.has-focus) ? Theme.border-focus
+            : root.editable ? Theme.border-strong
+            : Theme.border-subtle;
+        background: root.editable ? Theme.bg-surface : Theme.bg-readonly;
+
+        animate background { duration: 150ms; easing: ease-out; }
+        animate border-color { duration: 150ms; easing: ease-out; }
+
+        if root.value == "": Text {
+            x: 12px;
+            width: parent.width - 24px;
+            height: parent.height;
+            text: root.placeholder;
+            color: #94A3B8;
+            font-size: 13.5px;
+            vertical-alignment: center;
+        }
+
+        input := TextInput {
+            x: 12px;
+            width: parent.width - 24px;
+            height: parent.height;
+            text <=> root.value;
+            read-only: !root.editable || root.busy;
+            enabled: root.editable && !root.busy;
+            single-line: true;
+            vertical-alignment: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: root.editable ? Theme.text-primary : Theme.text-readonly;
+            selection-background-color: Theme.accent-soft;
+            selection-foreground-color: Theme.text-primary;
+            edited => { root.edited(self.text); }
+        }
+    }
+}
+
+export component LockableDnsGroup inherits VerticalLayout {
+    in-out property <string> dns-primary;
+    in-out property <string> dns-secondary;
+    in-out property <bool> editable: false;
+    in property <bool> busy: false;
+    callback toggle-edit();
+
+    spacing: 5px;
+
+    HorizontalLayout {
+        alignment: space-between;
+        spacing: 8px;
+
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: start;
+
+            Text {
+                text: "Máy chủ DNS";
+                color: Theme.text-primary;
+                font-size: 13px;
+                font-weight: 600;
+                vertical-alignment: center;
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Rectangle {
+                    height: 20px;
+                    border-radius: Theme.radius-pill;
+                    background: Theme.bg-subtle;
+
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        padding-right: 8px;
+                        Text {
+                            text: root.editable ? "Đang chỉnh sửa" : "Mặc định công ty";
+                            color: Theme.text-muted;
+                            font-size: 11px;
+                            font-weight: 500;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            alignment: center;
+            SmallEditButton {
+                editing: root.editable;
+                enabled: !root.busy;
+                clicked => {
+                    root.toggle-edit();
+                    if root.editable {
+                        dns1.focus();
+                    }
+                }
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: 10px;
+
+        // DNS 1
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: 3px;
+
+            Text {
+                text: "DNS chính";
+                color: Theme.text-muted;
+                font-size: 11.5px;
+                font-weight: 500;
+            }
+
+            Rectangle {
+                height: 35px;
+                border-radius: Theme.radius-sm;
+                border-width: (root.editable && dns1.has-focus) ? 1.5px : 1px;
+                border-color: (root.editable && dns1.has-focus) ? Theme.border-focus
+                    : root.editable ? Theme.border-strong
+                    : Theme.border-subtle;
+                background: root.editable ? Theme.bg-surface : Theme.bg-readonly;
+
+                dns1 := TextInput {
+                    x: 12px;
+                    width: parent.width - 24px;
+                    height: parent.height;
+                    text <=> root.dns-primary;
+                    read-only: !root.editable || root.busy;
+                    enabled: root.editable && !root.busy;
+                    single-line: true;
+                    vertical-alignment: center;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: root.editable ? Theme.text-primary : Theme.text-readonly;
+                    selection-background-color: Theme.accent-soft;
+                    selection-foreground-color: Theme.text-primary;
+                }
+            }
+        }
+
+        // DNS 2
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: 3px;
+
+            Text {
+                text: "DNS phụ";
+                color: Theme.text-muted;
+                font-size: 11.5px;
+                font-weight: 500;
+            }
+
+            Rectangle {
+                height: 35px;
+                border-radius: Theme.radius-sm;
+                border-width: (root.editable && dns2.has-focus) ? 1.5px : 1px;
+                border-color: (root.editable && dns2.has-focus) ? Theme.border-focus
+                    : root.editable ? Theme.border-strong
+                    : Theme.border-subtle;
+                background: root.editable ? Theme.bg-surface : Theme.bg-readonly;
+
+                dns2 := TextInput {
+                    x: 12px;
+                    width: parent.width - 24px;
+                    height: parent.height;
+                    text <=> root.dns-secondary;
+                    read-only: !root.editable || root.busy;
+                    enabled: root.editable && !root.busy;
+                    single-line: true;
+                    vertical-alignment: center;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: root.editable ? Theme.text-primary : Theme.text-readonly;
+                    selection-background-color: Theme.accent-soft;
+                    selection-foreground-color: Theme.text-primary;
+                }
+            }
+        }
+    }
+}

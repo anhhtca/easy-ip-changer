@@ -1,0 +1,138 @@
+import { Theme } from "../theme.slint";
+
+component OctetSlot inherits Rectangle {
+    in-out property <string> value;
+    in property <string> placeholder;
+    in property <bool> has-error: false;
+    in property <bool> enabled: true;
+    callback edited(string);
+
+    public function focus-input() {
+        ti.focus();
+    }
+
+    height: 42px;
+    horizontal-stretch: 1;
+    border-radius: Theme.radius-sm;
+    border-width: ti.has-focus ? 2px : 1px;
+    border-color: root.has-error ? Theme.danger
+        : ti.has-focus ? Theme.border-focus
+        : Theme.border-strong;
+    background: root.enabled ? Theme.bg-surface : Theme.bg-readonly;
+
+    animate border-color { duration: 140ms; easing: ease-out; }
+
+    if root.value == "" && !ti.has-focus: Text {
+        text: root.placeholder;
+        color: #94A3B8;
+        font-size: 16px;
+        font-weight: 500;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+
+    ti := TextInput {
+        width: parent.width - 12px;
+        height: parent.height;
+        x: 6px;
+        text <=> root.value;
+        enabled: root.enabled;
+        single-line: true;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        font-size: 17px;
+        font-weight: 600;
+        color: Theme.text-primary;
+        selection-background-color: Theme.accent-soft;
+        selection-foreground-color: Theme.text-primary;
+        edited => { root.edited(self.text); }
+    }
+}
+
+export component OctetInput inherits HorizontalLayout {
+    in-out property <string> o1;
+    in-out property <string> o2;
+    in-out property <string> o3;
+    in-out property <string> o4;
+    in property <bool> has-error: false;
+    in property <bool> enabled: true;
+
+    callback octet-edited(int, string);
+
+    public function focus-slot(idx: int) {
+        if idx == 0 {
+            s1.focus-input();
+        } else if idx == 1 {
+            s2.focus-input();
+        } else if idx == 2 {
+            s3.focus-input();
+        } else if idx == 3 {
+            s4.focus-input();
+        }
+    }
+
+    spacing: 8px;
+    alignment: stretch;
+
+    s1 := OctetSlot {
+        value <=> root.o1;
+        placeholder: "10";
+        has-error: root.has-error;
+        enabled: root.enabled;
+        edited(val) => { root.octet-edited(0, val); }
+    }
+
+    Text {
+        text: ".";
+        color: Theme.text-muted;
+        font-size: 22px;
+        font-weight: 700;
+        vertical-alignment: bottom;
+        horizontal-alignment: center;
+        width: 8px;
+    }
+
+    s2 := OctetSlot {
+        value <=> root.o2;
+        placeholder: "0";
+        has-error: root.has-error;
+        enabled: root.enabled;
+        edited(val) => { root.octet-edited(1, val); }
+    }
+
+    Text {
+        text: ".";
+        color: Theme.text-muted;
+        font-size: 22px;
+        font-weight: 700;
+        vertical-alignment: bottom;
+        horizontal-alignment: center;
+        width: 8px;
+    }
+
+    s3 := OctetSlot {
+        value <=> root.o3;
+        placeholder: "58";
+        has-error: root.has-error;
+        enabled: root.enabled;
+        edited(val) => { root.octet-edited(2, val); }
+    }
+
+    Text {
+        text: ".";
+        color: Theme.text-muted;
+        font-size: 22px;
+        font-weight: 700;
+        vertical-alignment: bottom;
+        horizontal-alignment: center;
+        width: 8px;
+    }
+
+    s4 := OctetSlot {
+        value <=> root.o4;
+        placeholder: "100";
+        has-error: root.has-error;
+        enabled: root.enabled;
+        edited(val) => { root.octet-edited(3, val); }
+    }
+}
