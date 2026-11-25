@@ -11,7 +11,7 @@ export component PrimaryButton inherits Rectangle {
     height: 42px;
     min-width: 128px;
     border-radius: Theme.radius-sm;
-    background: !root.enabled || root.loading ? #93B4E8
+    background: !root.enabled || root.loading ? Theme.accent-disabled
         : ta.pressed ? Theme.accent-pressed
         : ta.has-hover ? Theme.accent-hover
         : Theme.accent;
@@ -63,8 +63,8 @@ export component SecondaryButton inherits Rectangle {
     border-width: 1px;
     border-color: ta.has-hover && root.enabled ? Theme.border-strong : Theme.border-subtle;
     background: !root.enabled ? Theme.bg-subtle
-        : ta.pressed ? #E2E8F0
-        : ta.has-hover ? #F1F5F9
+        : ta.pressed ? #EAE3E6
+        : ta.has-hover ? #F5F0F2
         : Theme.bg-surface;
 
     animate background { duration: 150ms; easing: ease-out; }
@@ -111,8 +111,8 @@ export component SmallEditButton inherits Rectangle {
     border-width: 1px;
     border-color: root.editing ? Theme.accent : (ta.has-hover ? Theme.border-strong : Theme.border-subtle);
     background: root.editing ? Theme.bg-selected
-        : ta.pressed ? #E2E8F0
-        : ta.has-hover ? #F1F5F9
+        : ta.pressed ? #EAE3E6
+        : ta.has-hover ? #F5F0F2
         : Theme.bg-surface;
 
     animate background { duration: 150ms; easing: ease-out; }

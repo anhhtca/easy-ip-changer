@@ -13,7 +13,7 @@ component NicOptionRow inherits Rectangle {
         : ta.has-hover ? Theme.border-strong
         : Theme.border-subtle;
     background: root.selected ? Theme.bg-selected
-        : ta.has-hover ? #F8FAFC
+        : ta.has-hover ? #FAF7F8
         : Theme.bg-surface;
 
     animate background { duration: 150ms; easing: ease-out; }
@@ -47,8 +47,8 @@ component NicOptionRow inherits Rectangle {
                 width: 40px;
                 height: 40px;
                 border-radius: Theme.radius-sm;
-                background: root.selected ? #DBEAFE
-                    : root.item.is-ethernet ? #EEF4FC
+                background: root.selected ? Theme.accent-soft
+                    : root.item.is-ethernet ? #F8EBEF
                     : Theme.bg-subtle;
 
                 Image {
@@ -58,7 +58,7 @@ component NicOptionRow inherits Rectangle {
                     width: 20px;
                     height: 20px;
                     colorize: root.selected ? Theme.accent
-                        : root.item.is-ethernet ? #1E40AF
+                        : root.item.is-ethernet ? #8F1634
                         : Theme.text-secondary;
                     x: (parent.width - self.width) / 2;
                     y: (parent.height - self.height) / 2;
@@ -182,7 +182,8 @@ component NicOptionRow inherits Rectangle {
 
 export component NicSelectScreen inherits VerticalLayout {
     in property <[NicItem]> adapters;
-    in-out property <int> selected-index: 0;
+    in-out property <int> selected-index: -1;
+    in property <bool> has-ethernet: true;
     in property <string> scan-error: "";
 
     callback refresh-clicked();
@@ -293,6 +294,50 @@ export component NicSelectScreen inherits VerticalLayout {
             }
         }
 
+        if root.adapters.length > 0 && !root.has-ethernet: Rectangle {
+            border-radius: Theme.radius-md;
+            background: Theme.warning-bg;
+            border-width: 1px;
+            border-color: Theme.warning-border;
+
+            HorizontalLayout {
+                padding: 12px;
+                spacing: 10px;
+                alignment: start;
+
+                VerticalLayout {
+                    alignment: start;
+                    padding-top: 1px;
+                    Image {
+                        source: @image-url("../icons/alert.svg");
+                        width: 18px;
+                        height: 18px;
+                        colorize: Theme.warning;
+                    }
+                }
+
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 3px;
+
+                    Text {
+                        text: "Không tìm thấy kết nối Ethernet nào trên máy";
+                        color: #92400E;
+                        font-size: 13px;
+                        font-weight: 700;
+                        wrap: word-wrap;
+                    }
+
+                    Text {
+                        text: "Hãy kiểm tra lại cáp mạng / đầu chuyển USB Ethernet rồi bấm \"Quét lại\", hoặc chủ động chọn Wi-Fi bên dưới nếu bạn muốn đổi IP cho Wi-Fi.";
+                        color: #92400E;
+                        font-size: 12px;
+                        wrap: word-wrap;
+                    }
+                }
+            }
+        }
+
         if root.adapters.length > 0: Flickable {
             vertical-stretch: 1;
             content-height: list-box.preferred-height;
@@ -332,11 +377,14 @@ export component NicSelectScreen inherits VerticalLayout {
             alignment: space-between;
 
             Text {
-                text: root.adapters.length > 0
-                    ? "Đã tìm thấy " + root.adapters.length + " kết nối vật lý"
-                    : "Chưa chọn kết nối";
-                color: Theme.text-muted;
+                text: root.adapters.length == 0
+                    ? "Chưa có kết nối nào"
+                    : root.selected-index < 0
+                        ? "Vui lòng chọn một kết nối để tiếp tục"
+                        : "Đã tìm thấy " + root.adapters.length + " kết nối vật lý";
+                color: root.selected-index < 0 && root.adapters.length > 0 ? Theme.warning : Theme.text-muted;
                 font-size: 12.5px;
+                font-weight: root.selected-index < 0 && root.adapters.length > 0 ? 600 : 400;
                 vertical-alignment: center;
             }
 

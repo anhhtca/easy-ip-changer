@@ -17,7 +17,7 @@ component PriorityOptionRow inherits Rectangle {
         : (ta.has-hover && root.enabled) ? Theme.border-strong
         : Theme.border-subtle;
     background: root.selected ? Theme.bg-selected
-        : (ta.has-hover && root.enabled) ? #F8FAFC
+        : (ta.has-hover && root.enabled) ? #FAF7F8
         : Theme.bg-surface;
 
     animate background { duration: 140ms; easing: ease-out; }
@@ -202,7 +202,7 @@ export component IpConfigScreen inherits VerticalLayout {
                 Rectangle {
                     height: 26px;
                     border-radius: Theme.radius-sm;
-                    background: change-ta.has-hover && !root.saving ? #DCE5F2 : transparent;
+                    background: change-ta.has-hover && !root.saving ? Theme.accent-soft : transparent;
 
                     HorizontalLayout {
                         padding-left: 8px;
@@ -311,7 +311,7 @@ export component IpConfigScreen inherits VerticalLayout {
 
                     Rectangle {
                         height: 1px;
-                        background: #EEF2F7;
+                        background: Theme.bg-subtle;
                     }
 
                     LockableField {
@@ -329,7 +329,7 @@ export component IpConfigScreen inherits VerticalLayout {
 
                     Rectangle {
                         height: 1px;
-                        background: #EEF2F7;
+                        background: Theme.bg-subtle;
                     }
 
                     LockableDnsGroup {
@@ -357,7 +357,7 @@ export component IpConfigScreen inherits VerticalLayout {
                         height: 46px;
                         border-radius: Theme.radius-md;
                         background: (prio-ta.has-hover && root.can-change-priority && !root.saving)
-                            ? #F8FAFC : transparent;
+                            ? #FAF7F8 : transparent;
 
                         HorizontalLayout {
                             padding-left: 14px;
@@ -454,7 +454,7 @@ export component IpConfigScreen inherits VerticalLayout {
 
                             Rectangle {
                                 height: 1px;
-                                background: #EEF2F7;
+                                background: Theme.bg-subtle;
                             }
 
                             Text {

@@ -333,8 +333,13 @@ pub fn is_usb_ethernet_hint(friendly_name: &str, description: &str) -> bool {
     USB_HINTS.iter().any(|kw| combined.contains(kw))
 }
 
+/// Kiểm tra danh sách có chứa ít nhất một card Ethernet (bao gồm USB Ethernet) hay không.
+pub fn has_ethernet_adapter(adapters: &[NetworkAdapter]) -> bool {
+    adapters.iter().any(|a| a.kind == NicKind::Ethernet)
+}
+
 /// Sắp xếp card mạng: Ethernet đang kết nối -> Ethernet chưa cắm dây -> Wi-Fi đang kết nối -> Wi-Fi chưa kết nối.
-/// Trả về chỉ số mặc định (0 nếu có ít nhất 1 card, tức luôn ưu tiên chọn Ethernet).
+/// Chỉ tự động chọn mặc định khi có ít nhất 1 card Ethernet (không bao giờ tự động chọn Wi-Fi).
 pub fn sort_and_pick_default_nic(adapters: &mut [NetworkAdapter]) -> Option<usize> {
     adapters.sort_by(|a, b| {
         let rank = |nic: &NetworkAdapter| -> u8 {
@@ -350,7 +355,10 @@ pub fn sort_and_pick_default_nic(adapters: &mut [NetworkAdapter]) -> Option<usiz
             .then_with(|| a.friendly_name.to_lowercase().cmp(&b.friendly_name.to_lowercase()))
     });
 
-    if adapters.is_empty() { None } else { Some(0) }
+    adapters
+        .first()
+        .filter(|first| first.kind == NicKind::Ethernet)
+        .map(|_| 0)
 }
 
 /// Tìm cặp (Ethernet, Wi-Fi) để áp dụng ưu tiên dựa trên card người dùng đang chọn.
@@ -688,9 +696,27 @@ mod tests {
 
         let default_idx = sort_and_pick_default_nic(&mut list);
         assert_eq!(default_idx, Some(0));
+        assert!(has_ethernet_adapter(&list));
         assert_eq!(list[0].if_index, 12);
         assert_eq!(list[1].if_index, 9);
         assert_eq!(list[2].if_index, 5);
+    }
+
+    #[test]
+    fn test_no_ethernet_does_not_auto_select_wifi() {
+        let mut list = vec![NetworkAdapter {
+            if_index: 5,
+            friendly_name: "Wi-Fi".into(),
+            description: "Intel(R) Wi-Fi 6 AX201 160MHz".into(),
+            kind: NicKind::Wifi,
+            is_usb_ethernet: false,
+            is_connected: true,
+            current_ipv4: Some("10.0.29.88".into()),
+        }];
+
+        let default_idx = sort_and_pick_default_nic(&mut list);
+        assert_eq!(default_idx, None);
+        assert!(!has_ethernet_adapter(&list));
     }
 
     #[test]

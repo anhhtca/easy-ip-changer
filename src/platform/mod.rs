@@ -19,6 +19,7 @@ pub struct LaunchOptions {
     pub preview_no_admin: bool,
     pub preview_step2: bool,
     pub preview_single_nic: bool,
+    pub preview_wifi_only: bool,
 }
 
 impl LaunchOptions {
@@ -29,6 +30,7 @@ impl LaunchOptions {
                 "--preview-no-admin" => opts.preview_no_admin = true,
                 "--preview-step2" => opts.preview_step2 = true,
                 "--preview-single-nic" => opts.preview_single_nic = true,
+                "--preview-wifi-only" => opts.preview_wifi_only = true,
                 _ => {}
             }
         }

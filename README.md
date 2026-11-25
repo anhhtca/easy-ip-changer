@@ -48,6 +48,9 @@ cargo run -- --preview-step2
 
 # Giả lập máy bàn chỉ có 1 card Ethernet (không có Wi-Fi)
 cargo run -- --preview-single-nic
+
+# Giả lập laptop chỉ có Wi-Fi (không có Ethernet -> hiện cảnh báo và không tự chọn Wi-Fi)
+cargo run -- --preview-wifi-only
 ```
 
 ## Chạy kiểm thử tự động

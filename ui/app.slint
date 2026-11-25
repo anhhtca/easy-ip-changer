@@ -30,7 +30,7 @@ component StepBadge inherits HorizontalLayout {
                 : root.active ? Theme.header-step-active
                 : Theme.header-bg-elevated;
             border-width: (root.active || root.done) ? 0px : 1px;
-            border-color: #355885;
+            border-color: Theme.header-line;
 
             if root.done: Image {
                 source: @image-url("icons/check.svg");
@@ -43,7 +43,7 @@ component StepBadge inherits HorizontalLayout {
 
             if !root.done: Text {
                 text: root.num;
-                color: root.active ? #0B1F38 : Theme.header-muted;
+                color: root.active ? Theme.header-bg : Theme.header-muted;
                 font-size: 11.5px;
                 font-weight: 700;
                 horizontal-alignment: center;
@@ -63,6 +63,7 @@ component StepBadge inherits HorizontalLayout {
 
 export component AppWindow inherits Window {
     title: "Easy IP Changer — Đổi nhanh địa chỉ IP";
+    icon: @image-url("../assets/app-icon.png");
     default-font-family: Theme.font-sans;
     preferred-width: 560px;
     preferred-height: 730px;
@@ -79,7 +80,8 @@ export component AppWindow inherits Window {
 
     // Screen 1
     in-out property <[NicItem]> adapters: [];
-    in-out property <int> selected-nic-index: 0;
+    in-out property <int> selected-nic-index: -1;
+    in-out property <bool> has-ethernet: true;
     in-out property <string> scan-error: "";
 
     // Screen 2
@@ -158,20 +160,35 @@ export component AppWindow inherits Window {
                 HorizontalLayout {
                     alignment: space-between;
 
-                    VerticalLayout {
-                        spacing: 2px;
+                    HorizontalLayout {
+                        spacing: 11px;
+                        alignment: start;
 
-                        Text {
-                            text: "Easy IP Changer";
-                            color: Theme.header-text;
-                            font-size: 16px;
-                            font-weight: 700;
+                        VerticalLayout {
+                            alignment: center;
+                            Image {
+                                source: @image-url("icons/agribank-logo.svg");
+                                width: 34px;
+                                height: 34px;
+                            }
                         }
 
-                        Text {
-                            text: "Đổi nhanh địa chỉ IP cho Windows 10/11 Pro";
-                            color: Theme.header-muted;
-                            font-size: 12px;
+                        VerticalLayout {
+                            spacing: 2px;
+                            alignment: center;
+
+                            Text {
+                                text: "Easy IP Changer";
+                                color: Theme.header-text;
+                                font-size: 16px;
+                                font-weight: 700;
+                            }
+
+                            Text {
+                                text: "Đổi nhanh địa chỉ IP cho Windows 10/11 Pro";
+                                color: Theme.header-muted;
+                                font-size: 12px;
+                            }
                         }
                     }
 
@@ -182,14 +199,14 @@ export component AppWindow inherits Window {
                             border-radius: Theme.radius-pill;
                             background: Theme.header-bg-elevated;
                             border-width: 1px;
-                            border-color: #2E5280;
+                            border-color: Theme.header-line;
 
                             HorizontalLayout {
                                 padding-left: 9px;
                                 padding-right: 9px;
                                 Text {
                                     text: "Preview macOS";
-                                    color: #93C5FD;
+                                    color: Theme.header-muted;
                                     font-size: 11px;
                                     font-weight: 600;
                                     vertical-alignment: center;
@@ -215,7 +232,7 @@ export component AppWindow inherits Window {
                         Rectangle {
                             width: 24px;
                             height: 1.5px;
-                            background: root.current-screen > 1 ? Theme.success-dot : #2C4D77;
+                            background: root.current-screen > 1 ? Theme.success-dot : Theme.header-line;
                         }
                     }
 
@@ -253,6 +270,7 @@ export component AppWindow inherits Window {
                 height: parent.height;
                 adapters: root.adapters;
                 selected-index <=> root.selected-nic-index;
+                has-ethernet: root.has-ethernet;
                 scan-error: root.scan-error;
                 refresh-clicked => { root.refresh-adapters(); }
                 continue-clicked => { root.proceed-to-ip-config(); }

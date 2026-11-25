@@ -11,9 +11,9 @@ use slint::{ModelRc, SharedString, VecModel};
 
 use crate::domain::{
     DEFAULT_DNS_PRIMARY, DEFAULT_DNS_SECONDARY, DEFAULT_SUBNET, IpConfigRequest, NetworkAdapter,
-    NicKind, PriorityMode, PriorityUpdate, derive_gateway, parse_pasted_ipv4,
-    resolve_priority_pair, sanitize_octet_digits, validate_ip_consistency, validate_ip_octets,
-    validate_optional_ipv4, validate_subnet_mask,
+    NicKind, PriorityMode, PriorityUpdate, derive_gateway, has_ethernet_adapter,
+    parse_pasted_ipv4, resolve_priority_pair, sanitize_octet_digits, sort_and_pick_default_nic,
+    validate_ip_consistency, validate_ip_octets, validate_optional_ipv4, validate_subnet_mask,
 };
 use crate::platform::{LaunchOptions, SystemNetworkBackend, create_backend};
 
@@ -48,7 +48,10 @@ fn main() -> Result<(), slint::PlatformError> {
                 return;
             };
             match backend.list_physical_adapters() {
-                Ok(adapters) => {
+                Ok(mut adapters) => {
+                    let default_idx = sort_and_pick_default_nic(&mut adapters);
+                    let has_eth = has_ethernet_adapter(&adapters);
+
                     let items: Vec<NicItem> = adapters
                         .iter()
                         .map(|a| NicItem {
@@ -67,12 +70,14 @@ fn main() -> Result<(), slint::PlatformError> {
 
                     let model = Rc::new(VecModel::from(items));
                     ui.set_adapters(ModelRc::from(model));
-                    ui.set_selected_nic_index(if adapters.is_empty() { -1 } else { 0 });
+                    ui.set_has_ethernet(has_eth);
+                    ui.set_selected_nic_index(default_idx.map_or(-1, |i| i as i32));
                     ui.set_scan_error(SharedString::new());
                     state.borrow_mut().adapters = adapters;
                 }
                 Err(err) => {
                     ui.set_adapters(ModelRc::from(Rc::new(VecModel::<NicItem>::default())));
+                    ui.set_has_ethernet(true);
                     ui.set_selected_nic_index(-1);
                     ui.set_scan_error(SharedString::from(err));
                     state.borrow_mut().adapters.clear();
@@ -618,5 +623,36 @@ mod ui_snapshot_tests {
         ui.set_result_priority(SharedString::from("Ưu tiên Wi-Fi hơn Ethernet"));
         ui.set_current_screen(3);
         dump_frame(&sw_window, width, height, &dir.join("05_success.ppm"));
+
+        // 6. Màn hình 1 (không có Ethernet — chỉ có Wi-Fi, không tự chọn)
+        let wifi_only_backend = create_backend(&LaunchOptions {
+            preview_wifi_only: true,
+            ..Default::default()
+        });
+        let mut wifi_adapters = wifi_only_backend.list_physical_adapters().unwrap();
+        let default_idx = sort_and_pick_default_nic(&mut wifi_adapters);
+        let wifi_items: Vec<NicItem> = wifi_adapters
+            .iter()
+            .map(|a| NicItem {
+                if_index: a.if_index as i32,
+                friendly_name: SharedString::from(a.friendly_name.as_str()),
+                description: SharedString::from(a.description.as_str()),
+                type_label: SharedString::from(a.kind.display_label(a.is_usb_ethernet)),
+                is_ethernet: a.kind == NicKind::Ethernet,
+                is_connected: a.is_connected,
+                status_text: SharedString::from(a.status_text()),
+                ip_summary: SharedString::from(a.ip_summary()),
+            })
+            .collect();
+        ui.set_adapters(ModelRc::from(Rc::new(VecModel::from(wifi_items))));
+        ui.set_has_ethernet(has_ethernet_adapter(&wifi_adapters));
+        ui.set_selected_nic_index(default_idx.map_or(-1, |i| i as i32));
+        ui.set_current_screen(1);
+        dump_frame(
+            &sw_window,
+            width,
+            height,
+            &dir.join("06_no_ethernet_wifi_only.ppm"),
+        );
     }
 }

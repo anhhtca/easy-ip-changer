@@ -106,20 +106,20 @@ export component SuccessScreen inherits VerticalLayout {
                 padding-bottom: 6px;
 
                 SummaryRow { label: "Kết nối mạng"; value: root.adapter-name; }
-                Rectangle { height: 1px; background: #EEF2F7; }
+                Rectangle { height: 1px; background: Theme.bg-subtle; }
                 SummaryRow { label: "Địa chỉ IP"; value: root.ip; }
-                Rectangle { height: 1px; background: #EEF2F7; }
+                Rectangle { height: 1px; background: Theme.bg-subtle; }
                 SummaryRow { label: "Subnet Mask"; value: root.subnet; }
-                Rectangle { height: 1px; background: #EEF2F7; }
+                Rectangle { height: 1px; background: Theme.bg-subtle; }
                 SummaryRow { label: "Default Gateway"; value: root.gateway; }
-                Rectangle { height: 1px; background: #EEF2F7; }
+                Rectangle { height: 1px; background: Theme.bg-subtle; }
                 SummaryRow { label: "DNS chính"; value: root.dns-primary; }
-                Rectangle { height: 1px; background: #EEF2F7; }
+                Rectangle { height: 1px; background: Theme.bg-subtle; }
                 SummaryRow { label: "DNS phụ"; value: root.dns-secondary; }
 
                 if root.priority-summary != "": Rectangle {
                     height: 1px;
-                    background: #EEF2F7;
+                    background: Theme.bg-subtle;
                 }
                 if root.priority-summary != "": SummaryRow {
                     label: "Thứ tự ưu tiên";
